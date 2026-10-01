@@ -1,9 +1,9 @@
 import { View, Text, StyleSheet } from "react-native";
 
-export default function ContactScreen() {
+export default function BookingScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>CONTACT SCREEN</Text>
+      <Text style={styles.title}>BOOKING SCREEN</Text>
       <Text style={styles.subtitle}>
         Navigation is working!
       </Text>

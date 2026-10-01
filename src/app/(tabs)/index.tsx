@@ -1,12 +1,10 @@
-import { View, Text, StyleSheet } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
-export default function ContactScreen() {
+export default function HomeScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>CONTACT SCREEN</Text>
-      <Text style={styles.subtitle}>
-        Navigation is working!
-      </Text>
+      <Text style={styles.title}>HOME SCREEN</Text>
+      <Text style={styles.subtitle}>Navigation is working!</Text>
     </View>
   );
 }
