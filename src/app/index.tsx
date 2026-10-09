@@ -10,7 +10,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { BlurView } from 'expo-blur';
 import { Feather, Ionicons } from '@expo/vector-icons';
 import SlideMenu from './SlideMenu';
@@ -26,6 +26,7 @@ const CARDS = [
 ];
 
 export default function GamingArenaScreen() {
+  const router = useRouter();
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
@@ -113,16 +114,17 @@ export default function GamingArenaScreen() {
                 <Text style={styles.activeTabText}>Home</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.tabItem}>
-                <Feather name="shopping-bag" size={20} color="#FFFFFF" />
+              <TouchableOpacity style={styles.tabItem} 
+              onPress={() => router.push('/offers')}>
+                <Feather name="shopping-bag" size={20} color="#888888" />
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.tabItem}>
-                <Ionicons name="pricetag-outline" size={20} color="#FFFFFF" />
+                <Ionicons name="pricetag-outline" size={20} color="#888888" />
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.tabItem}>
-                <Ionicons name="chatbubble-outline" size={20} color="#FFFFFF" />
+                <Ionicons name="chatbubble-outline" size={20} color="#888888" />
               </TouchableOpacity>
             </View>
           </View>
@@ -199,6 +201,7 @@ const styles = StyleSheet.create({
   description: {
     color: '#FFFFFF',
     fontSize: 14,
+    fontWeight: "300",
     lineHeight: 18,
     textAlign: 'right',
     maxWidth: width * 0.65,
@@ -313,7 +316,7 @@ const styles = StyleSheet.create({
   activeTabText: {
     color: '#FFFFFF',
     fontWeight: '400',
-    fontSize: 13,
+    fontSize: 14,
   },
   tabItem: {
     padding: 12,

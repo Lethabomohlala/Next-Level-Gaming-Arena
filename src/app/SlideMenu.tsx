@@ -138,7 +138,7 @@ export default function SlideMenu() {
               </Pressable>
 
               <Pressable onPress={() => navigateTo("/offers")}>
-                <Text style={styles.navText}>OFFERINGS</Text>
+                <Text style={styles.navText}>OFFERS</Text>
               </Pressable>
 
               <Pressable onPress={() => navigateTo("/booking")}>
