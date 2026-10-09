@@ -1,98 +1,321 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
+import React from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ImageBackground,
+  Image, // Import Image
+  TouchableOpacity,
+  ScrollView,
+  Dimensions,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Stack } from 'expo-router';
+import { BlurView } from 'expo-blur';
+import { Feather, Ionicons } from '@expo/vector-icons';
+import SlideMenu from './SlideMenu';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+const { width } = Dimensions.get('window');
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+// Data for the horizontal feature cards
+const CARDS = [
+  { id: '1', title: 'ULTIMATE\nGAMER\nPASS' },
+  { id: '2', title: 'VIRTUAL\nREALITY' },
+  { id: '3', title: 'ESPORTS\nTRAINING' },
+  { id: '4', title: 'ESCAPE\nROOM\nCHALLENGE' },
+];
+
+export default function GamingArenaScreen() {
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+    <View style={styles.container}>
+      <Stack.Screen options={{ headerShown: false }} />
 
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+      <ImageBackground
+        source={require('../../assets/images/chill.png')}
+        style={styles.backgroundImage}
+        resizeMode="cover"
+      >
+        <SafeAreaView style={styles.safeArea}>
+          {/* TOP HEADER */}
+          <View style={styles.topHeader}>
+            <View style={styles.logoBadge}>
+              <Image
+                source={require('../../assets/images/logo.png')}
+                style={styles.logoImage}
+                resizeMode="contain"
+              />
+            </View>
+            <SlideMenu />
+          </View>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+          >
+            {/* HERO CONTENT */}
+            <View style={styles.heroSection}>
+              <Text style={styles.eyebrow}>NEXT LEVEL GAMING ARENA</Text>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
+              <Text style={styles.mainTitle}>
+                ELEVATE{'\n'}YOUR{'\n'}GAME
+              </Text>
 
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+              <Text style={styles.description}>
+                Experience premium gaming, Esports, and unforgettable events all in
+                one place. Explore our packages, choose your experience, and take
+                your game to the <Text style={styles.boldText}>Next Level.</Text>
+              </Text>
+
+              <TouchableOpacity style={styles.primaryButton}>
+                <Text style={styles.primaryButtonText}>ENTER THE ARENA</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* LEADERBOARD SECTION*/}
+            <View style={styles.bottomLeaderboardSection}>
+              <View style={styles.sectionHeaderContainer}>
+                <Text style={styles.sectionHeaderTitle}>
+                  ✶ TOP OF THE <Text style={styles.sectionHeaderBold}>LEADERBOARD!</Text> ✶
+                </Text>
+              </View>
+
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.cardsScrollContainer}
+              >
+                {CARDS.map((card) => (
+                  <BlurView
+                    key={card.id}
+                    intensity={25}
+                    tint="dark"
+                    style={styles.card}
+                  >
+                    <Text style={styles.cardTitle}>{card.title}</Text>
+
+                    <TouchableOpacity style={styles.cardFooter}>
+                      <Text style={styles.cardLink}>View More</Text>
+                      <View style={styles.arrowCircle}>
+                        <Feather name="arrow-right" size={14} color="#000000" />
+                      </View>
+                    </TouchableOpacity>
+                  </BlurView>
+                ))}
+              </ScrollView>
+            </View>
+          </ScrollView>
+
+          {/* FLOATING BOTTOM TAB BAR */}
+          <View style={styles.tabBarWrapper}>
+            <View style={styles.tabBarContainer}>
+              <TouchableOpacity style={styles.activeTab}>
+                <Ionicons name="home-outline" size={20} color="#FFFFFF" />
+                <Text style={styles.activeTabText}>Home</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.tabItem}>
+                <Feather name="shopping-bag" size={20} color="#FFFFFF" />
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.tabItem}>
+                <Ionicons name="pricetag-outline" size={20} color="#FFFFFF" />
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.tabItem}>
+                <Ionicons name="chatbubble-outline" size={20} color="#FFFFFF" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </SafeAreaView>
+      </ImageBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
+    backgroundColor: '#000000',
+  },
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
   },
   safeArea: {
     flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
   },
-  heroSection: {
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: 'space-between',
+    paddingBottom: 90,
+  },
+
+  /* Top Header */
+  topHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 10,
+  },
+  logoBadge: {
+    width: 44,
+    height: 48,
     alignItems: 'center',
     justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
   },
-  title: {
-    textAlign: 'center',
+  logoImage: {
+    width: '100%',
+    height: '100%',
   },
-  code: {
-    textTransform: 'uppercase',
+  iconButton: {
+    padding: 4,
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+
+  /* Hero Section */
+  heroSection: {
+    alignItems: 'flex-end',
+    paddingHorizontal: 20,
+    marginTop: 20,
+  },
+  eyebrow: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '400',
+    letterSpacing: 1.2,
+    marginBottom: 10,
+    textAlign: 'right',
+  },
+  mainTitle: {
+    color: '#FFFFFF',
+    fontSize: 40,
+    fontWeight: '900',
+    lineHeight: 40,
+    textAlign: 'right',
+    letterSpacing: 0.5,
+    marginBottom: 10,
+  },
+  description: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    lineHeight: 18,
+    textAlign: 'right',
+    maxWidth: width * 0.65,
+    marginBottom: 20,
+  },
+  boldText: {
+    fontWeight: '900',
+    color: '#FFFFFF',
+  },
+  primaryButton: {
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 30,
+  },
+  primaryButtonText: {
+    color: '#000000',
+    fontWeight: '400',
+    fontSize: 14,
+    letterSpacing: 0.8,
+  },
+
+  /* Bottom Leaderboard Section */
+  bottomLeaderboardSection: {
+    marginTop: 'auto',
+  },
+  sectionHeaderContainer: {
+    paddingHorizontal: 20,
+    marginBottom: 10,
+  },
+  sectionHeaderTitle: {
+    color: '#FFFFFF',
+    fontSize: 22,
+    letterSpacing: 1,
+  },
+  sectionHeaderBold: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+  },
+
+  /* Horizontal Cards */
+  cardsScrollContainer: {
+    paddingLeft: 20,
+    paddingRight: 20,
+    gap: 12,
+  },
+  card: {
+    width: 140,
+    height: 160,
+    borderRadius: 20,
+    padding: 14,
+    justifyContent: 'space-between',
+    borderWidth: 0.5,
+    borderColor: '#5F1DAB',
+    overflow: 'hidden',
+  },
+  cardTitle: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: '700',
+    lineHeight: 18,
+    letterSpacing: 0.8,
+  },
+  cardFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  cardLink: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '400',
+  },
+  arrowCircle: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  /* Floating Bottom Navigation Bar */
+  tabBarWrapper: {
+    position: 'absolute',
+    bottom: 24,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+  },
+  tabBarContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#000000',
+    width: width * 0.88,
+    height: 60,
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 8,
+    borderWidth: 1,
+    borderColor: '#FFFFFF1F',
+  },
+  activeTab: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FF3B00',
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    borderRadius: 22,
+    gap: 8,
+  },
+  activeTabText: {
+    color: '#FFFFFF',
+    fontWeight: '400',
+    fontSize: 13,
+  },
+  tabItem: {
+    padding: 12,
   },
 });
