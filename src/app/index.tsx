@@ -4,7 +4,7 @@ import {
   Text,
   View,
   ImageBackground,
-  Image, // Import Image
+  Image,
   TouchableOpacity,
   ScrollView,
   Dimensions,
