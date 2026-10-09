@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "app-test",
-    "slug": "app-test",
+    "name": "lethabos-screens",
+    "slug": "lethabos-screens",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "apptest",
+    "scheme": "lethabosscreens",
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon"
@@ -32,7 +32,8 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true,
