@@ -49,7 +49,6 @@ function CircularTextBadge() {
 
 return (
     <View style={styles.circularBadgeContainer}>
-      {/* WRAP THE SVG IN ANIMATED.VIEW WITH ROTATE TRANSFORM */}
       <Animated.View style={{ transform: [{ rotate: spin }] }}>
         <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
           <Path id="circlePath" d={pathD} fill="none" />
