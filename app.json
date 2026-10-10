@@ -1,27 +1,27 @@
 {
   "expo": {
-    "name": "lethabos-screens",
-    "slug": "lethabos-screens",
+    "name": "next-level",
+    "slug": "next-level",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "lethabosscreens",
+    "icon": "./assets/images/logo2.png",
+    "scheme": "nextlevel",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/images/logo2.png"
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "foregroundImage": "./assets/images/logo2.png",
+        "backgroundImage": "./assets/images/logo2.png",
+        "monochromeImage": "./assets/images/logo2.png"
       },
       "predictiveBackGestureEnabled": false
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/logo2.png"
     },
     "plugins": [
       "expo-router",
@@ -29,7 +29,7 @@
         "expo-splash-screen",
         {
           "backgroundColor": "#208AEF",
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/logo2.png",
           "imageWidth": 76
         }
       ],
