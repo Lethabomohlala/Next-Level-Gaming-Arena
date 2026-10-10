@@ -8,12 +8,13 @@ import {
   Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Stack, useRouter } from 'expo-router';
+import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function UltimateGamerPassScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams();
 
   return (
     <View style={styles.container}>
@@ -41,8 +42,7 @@ export default function UltimateGamerPassScreen() {
             <View style={styles.topHeader}>
               <Pressable
                 style={styles.backButton}
-                onPress={() => router.back()}
-              >
+                onPress={() => router.push("/offers")}>
                 <Ionicons name="arrow-back" size={20} color="#000000" />
               </Pressable>
             </View>
@@ -94,7 +94,11 @@ export default function UltimateGamerPassScreen() {
                     ]}
                     onPress={() => router.push({
                       pathname: '/booking',
-                      params: { title: 'ULTIMATE GAMER PASS', price: '1500' }
+                      params: { 
+                        title: 'ULTIMATE GAMER PASS', 
+                        price: '1500', 
+                        existingItems: params?.existingItems // Carry it back to booking!
+                      }
                     })}
                   >
                     <Text style={styles.bookButtonText}>BOOK NOW!</Text>

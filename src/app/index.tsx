@@ -123,11 +123,13 @@ export default function GamingArenaScreen() {
                 <Feather name="shopping-bag" size={20} color="#888888" />
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.tabItem}>
+              <TouchableOpacity style={styles.tabItem}
+                onPress={() => router.push('/booking')}>
                 <Ionicons name="pricetag-outline" size={20} color="#888888" />
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.tabItem}>
+              <TouchableOpacity style={styles.tabItem}
+                onPress={() => router.push('/contact')}>
                 <Ionicons name="chatbubble-outline" size={20} color="#888888" />
               </TouchableOpacity>
             </View>

@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { Stack, useRouter } from "expo-router";
+import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
 import { useState } from "react";
 import {
     Dimensions,
@@ -49,6 +49,7 @@ function OfferCard({ title, description, price, onPress }: OfferCardProps) {
 
 export default function OffersScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams();
   const [activeTab, setActiveTab] = useState<"packages" | "experiences">(
     "packages",
   );
@@ -173,7 +174,12 @@ export default function OffersScreen() {
                 title={item.title}
                 description={item.description}
                 price={item.price}
-                onPress={() => router.push(item.route as any)}
+                onPress={() =>
+                  router.push({
+                    pathname: item.route as any,
+                    params: { existingItems: params?.existingItems },
+                  })
+                }
               />
             ))}
           </View>
@@ -192,21 +198,20 @@ export default function OffersScreen() {
           {/* OFFERS / PACKAGES TAB (ACTIVE) */}
           <Pressable
             style={[styles.tabItem, styles.activeTab]}
-            onPress={() => router.push("/offers")}
-          >
+            onPress={() => router.push("/offers")}>
             <Ionicons name="bag-handle" size={18} color="#FFFFFF" />
             <Text style={styles.activeTabText}>Offers</Text>
           </Pressable>
 
           {/* DISCOUNTS / PROMOS TAB */}
           <Pressable style={styles.tabItem} 
-          onPress={() => router.push("/")}
-          >
+            onPress={() => router.push("/booking")}>
             <Ionicons name="pricetag-outline" size={20} color="#888888" />
           </Pressable>
 
           {/* CHAT / SUPPORT TAB */}
-          <Pressable style={styles.tabItem} onPress={() => {}}>
+          <Pressable style={styles.tabItem}
+            onPress={() => router.push('/contact')}>
             <Ionicons name="chatbubble-outline" size={20} color="#888888" />
           </Pressable>
         </View>

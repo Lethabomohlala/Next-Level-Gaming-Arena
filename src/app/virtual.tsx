@@ -8,12 +8,13 @@ import {
   Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Stack, useRouter } from 'expo-router';
+import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function VirtualRealityScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams();
 
   return (
     <View style={styles.container}>
@@ -40,8 +41,7 @@ export default function VirtualRealityScreen() {
             <View style={styles.topHeader}>
               <Pressable
                 style={styles.backButton}
-                onPress={() => router.back()}
-              >
+                onPress={() => router.push("/offers")}>
                 <Ionicons name="arrow-back" size={20} color="#000000" />
               </Pressable>
             </View>
@@ -94,8 +94,12 @@ export default function VirtualRealityScreen() {
                       pressed && styles.bookButtonPressed,
                     ]}
                     onPress={() => router.push({
-                      pathname: '/',
-                      params: { title: 'VIRTUAL REALITY', price: '750' }
+                      pathname: '/booking',
+                      params: { 
+                        title: 'VIRTUAL REALITY', 
+                        price: '750',
+                        existingItems: params?.existingItems 
+                      }
                     })}
                   >
                     <Text style={styles.bookButtonText}>BOOK NOW!</Text>
