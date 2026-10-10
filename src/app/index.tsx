@@ -67,7 +67,9 @@ export default function GamingArenaScreen() {
                 your game to the <Text style={styles.boldText}>Next Level.</Text>
               </Text>
 
-              <TouchableOpacity style={styles.primaryButton}>
+              <TouchableOpacity style={styles.primaryButton} 
+                onPress={() => router.push('/offers')}
+                >
                 <Text style={styles.primaryButtonText}>ENTER THE ARENA</Text>
               </TouchableOpacity>
             </View>
@@ -94,7 +96,9 @@ export default function GamingArenaScreen() {
                   >
                     <Text style={styles.cardTitle}>{card.title}</Text>
 
-                    <TouchableOpacity style={styles.cardFooter}>
+                    <TouchableOpacity style={styles.cardFooter} 
+                      onPress={() => router.push('/offers')}
+                      >
                       <Text style={styles.cardLink}>View More</Text>
                       <View style={styles.arrowCircle}>
                         <Feather name="arrow-right" size={14} color="#000000" />
