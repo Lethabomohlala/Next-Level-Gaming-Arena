@@ -145,6 +145,10 @@ export default function SlideMenu() {
                 <Text style={styles.navText}>BOOKINGS</Text>
               </Pressable>
 
+              <Pressable onPress={() => navigateTo("/faq")}>
+                <Text style={styles.navText}>FAQ</Text>
+              </Pressable>
+
               <Pressable onPress={() => navigateTo("/contact")}>
                 <Text style={styles.navText}>
                   CONTACT <Text style={styles.thinText}>US</Text>
