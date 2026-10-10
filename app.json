@@ -1,43 +1,25 @@
 {
   "expo": {
-    "name": "next-level",
-    "slug": "next-level",
+    "name": "NextLevelArena",
+    "slug": "NextLevelArena",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/logo2.png",
-    "scheme": "nextlevel",
-    "userInterfaceStyle": "automatic",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
     "ios": {
-      "icon": "./assets/images/logo2.png"
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/logo2.png",
-        "backgroundImage": "./assets/images/logo2.png",
-        "monochromeImage": "./assets/images/logo2.png"
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "output": "static",
-      "favicon": "./assets/images/logo2.png"
-    },
-    "plugins": [
-      "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "backgroundColor": "#208AEF",
-          "image": "./assets/images/logo2.png",
-          "imageWidth": 76
-        }
-      ],
-      "expo-font"
-    ],
-    "experiments": {
-      "typedRoutes": true,
-      "reactCompiler": true
+      "favicon": "./assets/favicon.png"
     }
   }
 }
