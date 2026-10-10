@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { Stack, useRouter } from "expo-router";
+import { useState } from "react";
 import {
-  StyleSheet,
-  Text,
-  View,
-  ImageBackground,
-  ScrollView,
-  Pressable,
-  Dimensions,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Stack, useRouter } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
+    Dimensions,
+    ImageBackground,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 
 interface FaqItem {
   question: string;
@@ -22,29 +22,29 @@ interface FaqItem {
 
 const FAQ_DATA: FaqItem[] = [
   {
-    question: 'What are your operating hours and location?',
+    question: "What are your operating hours and location?",
     answer:
-      'We are open Monday through Saturday from 09:00 AM to 18:00 PM and Closed on Sundays. Please check our official website for local address details.',
+      "We are open Monday through Saturday from 09:00 AM to 18:00 PM and Closed on Sundays. Please check our official website for local address details.",
   },
   {
-    question: 'Can I bring my own peripherals or accounts?',
+    question: "Can I bring my own peripherals or accounts?",
     answer:
-      'Yes, players are welcome to bring their own headsets, mice, mechanical keyboards, or controllers. You can also log directly into your personal game accounts like Steam, Riot, Epic Games, or Battle.net.',
+      "Yes, players are welcome to bring their own headsets, mice, mechanical keyboards, or controllers. You can also log directly into your personal game accounts like Steam, Riot, Epic Games, or Battle.net.",
   },
   {
-    question: 'Age Requirements?',
+    question: "Age Requirements?",
     answer:
-      'Gamers under 12 years old must be accompanied by a parent or legal guardian at all times. Guests aged 12+ are welcome to play unaccompanied during regular business operating hours.',
+      "Gamers under 12 years old must be accompanied by a parent or legal guardian at all times. Guests aged 12+ are welcome to play unaccompanied during regular business operating hours.",
   },
   {
-    question: 'Food, Drinks & Equipment Care?',
+    question: "Food, Drinks & Equipment Care?",
     answer:
-      'Sealed or bottled beverages are permitted in non-station zones, but intentional damage to gear carries full financial liability. We maintain a zero-tolerance policy for hardware abuse and unsportsmanlike behavior.',
+      "Sealed or bottled beverages are permitted in non-station zones, but intentional damage to gear carries full financial liability. We maintain a zero-tolerance policy for hardware abuse and unsportsmanlike behavior.",
   },
   {
-    question: 'Do I need to make a reservation?',
+    question: "Do I need to make a reservation?",
     answer:
-      'Walk-ins are always welcome based on station availability, though booking online in advance is recommended. Tabletop and card gaming areas are free and operating on a first-come, first-served basis.',
+      "Walk-ins are always welcome based on station availability, though booking online in advance is recommended. Tabletop and card gaming areas are free and operating on a first-come, first-served basis.",
   },
 ];
 
@@ -61,12 +61,12 @@ export default function FaqScreen() {
       <Stack.Screen options={{ headerShown: false }} />
 
       <ImageBackground
-        source={require('../../assets/images/faq.png')}
+        source={require("../../assets/images/faq.png")}
         style={styles.fullScreenBackground}
         resizeMode="cover"
       >
         <LinearGradient
-          colors={['rgba(0,0,0,0.5)', 'rgba(0,0,0,0.75)', 'rgba(0,0,0,0.95)']}
+          colors={["rgba(0,0,0,0.5)", "rgba(0,0,0,0.75)", "rgba(0,0,0,0.95)"]}
           locations={[0, 0.4, 1]}
           style={styles.gradientOverlay}
         >
@@ -104,7 +104,7 @@ export default function FaqScreen() {
                         <Text style={styles.questionText}>{item.question}</Text>
                         <View style={styles.iconContainer}>
                           <Ionicons
-                            name={isExpanded ? 'remove' : 'add'}
+                            name={isExpanded ? "remove" : "add"}
                             size={18}
                             color="#FF3B1D"
                           />
@@ -131,7 +131,7 @@ export default function FaqScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: "#000000",
   },
   fullScreenBackground: {
     width: width,
@@ -159,49 +159,49 @@ const styles = StyleSheet.create({
     width: 38,
     height: 38,
     borderRadius: 20,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#FFFFFF",
+    alignItems: "center",
+    justifyContent: "center",
   },
   headerTitleSection: {
     marginTop: 40,
     marginBottom: 30,
-    alignItems: 'center',
+    alignItems: "center",
   },
   mainTitle: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 32,
-    fontWeight: '800',
+    fontWeight: "800",
     letterSpacing: 1,
-    textAlign: 'center',
+    textAlign: "center",
   },
   subTitle: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 32,
-    fontWeight: '300',
+    fontWeight: "300",
     letterSpacing: 1,
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: 4,
   },
   accordionContainer: {
     gap: 20,
   },
   accordionItem: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderRadius: 40,
-    overflow: 'hidden',
+    overflow: "hidden",
     paddingVertical: 20,
     paddingHorizontal: 20,
   },
   accordionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   questionText: {
-    color: '#000000',
+    color: "#000000",
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: "700",
     flex: 1,
     paddingRight: 10,
   },
@@ -209,19 +209,19 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   accordionBody: {
     marginTop: 12,
     borderTopWidth: 1,
-    borderTopColor: '#FFFFFF',
+    borderTopColor: "#FFFFFF",
     paddingTop: 10,
   },
   answerText: {
-    color: '#000000',
+    color: "#000000",
     fontSize: 16,
     lineHeight: 22,
-    fontWeight: '400',
+    fontWeight: "400",
   },
 });
