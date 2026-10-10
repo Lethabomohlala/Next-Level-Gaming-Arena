@@ -59,6 +59,7 @@ export default function OffersScreen() {
       title: "ULTIMATE GAMER PASS",
       description: "Unlimited gaming access for a full day.",
       price: "R1 500",
+      route: "/ultimate",
     },
     {
       id: "2",
@@ -66,6 +67,7 @@ export default function OffersScreen() {
       description:
         "Improve competitive gaming skills with professional coaching.",
       price: "R1 500",
+      route: "/esports",
     },
   ];
 
@@ -75,12 +77,14 @@ export default function OffersScreen() {
       title: "VIRTUAL REALITY",
       description: "Explore immersive virtual reality games.",
       price: "R 750",
+      route: "/virtual",
     },
     {
       id: "4",
       title: "ESCAPE ROOM CHALLENGE",
       description: "Solve puzzles and escape before time runs out.",
       price: "R 750",
+      route: "/escape",
     },
   ];
 
@@ -169,7 +173,7 @@ export default function OffersScreen() {
                 title={item.title}
                 description={item.description}
                 price={item.price}
-                onPress={() => {}}
+                onPress={() => router.push(item.route as any)}
               />
             ))}
           </View>
@@ -179,6 +183,7 @@ export default function OffersScreen() {
       {/* FLOATING BOTTOM TAB BAR */}
       <View style={styles.bottomBarContainer}>
         <View style={styles.bottomBar}>
+          
           {/* HOME TAB */}
           <Pressable style={styles.tabItem} onPress={() => router.push("/")}>
             <Ionicons name="home-outline" size={20} color="#888888" />
@@ -194,7 +199,9 @@ export default function OffersScreen() {
           </Pressable>
 
           {/* DISCOUNTS / PROMOS TAB */}
-          <Pressable style={styles.tabItem} onPress={() => {}}>
+          <Pressable style={styles.tabItem} 
+          onPress={() => router.push("/")}
+          >
             <Ionicons name="pricetag-outline" size={20} color="#888888" />
           </Pressable>
 
