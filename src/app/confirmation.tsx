@@ -1,40 +1,41 @@
-import React from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import {
+  Dimensions,
+  Image,
+  ImageBackground,
+  Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
-  ImageBackground,
-  Image,
-  ScrollView,
-  Pressable,
-  Dimensions,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 
 export default function ConfirmationScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
 
   // Extract submitted client and booking data with fallbacks matching your screenshot layout
-  const totalAmount = params?.totalAmount ? String(params.totalAmount) : '3 881.25';
-  const bookingId = params?.bookingId ? String(params.bookingId) : '#NLG-22384';
-  const fullName = params?.name ? String(params.name) : 'John Doe';
-  const email = params?.email ? String(params.email) : 'Johndoe@example.com';
-  const phone = params?.phone ? String(params.phone) : '0819924545';
-  const bookingDate = params?.date ? String(params.date) : '10 Oct 2026';
-  const guestCount = params?.guestCount ? String(params.guestCount) : '1';
+  const totalAmount = params?.totalAmount
+    ? String(params.totalAmount)
+    : "3 881.25";
+  const bookingId = params?.bookingId ? String(params.bookingId) : "#NLG-22384";
+  const fullName = params?.name ? String(params.name) : "John Doe";
+  const email = params?.email ? String(params.email) : "Johndoe@example.com";
+  const phone = params?.phone ? String(params.phone) : "0819924545";
+  const bookingDate = params?.date ? String(params.date) : "10 Oct 2026";
+  const guestCount = params?.guestCount ? String(params.guestCount) : "1";
 
   const handleClearAndGoToOffers = () => {
-    router.replace('/offers');
+    router.replace("/offers");
   };
 
   const handleGoToHome = () => {
-    router.replace('/');
+    router.replace("/");
   };
 
   return (
@@ -42,16 +43,12 @@ export default function ConfirmationScreen() {
       <Stack.Screen options={{ headerShown: false }} />
 
       <ImageBackground
-        source={require('../../assets/images/booking2.png')}
+        source={require("../../assets/images/booking2.png")}
         style={styles.fullScreenBackground}
         resizeMode="cover"
       >
         <LinearGradient
-          colors={[
-            'rgba(0,0,0,0.5)',
-            'rgba(0,0,0,0.7)',
-            'rgba(0,0,0,0.95)',
-          ]}
+          colors={["rgba(0,0,0,0.5)", "rgba(0,0,0,0.7)", "rgba(0,0,0,0.95)"]}
           locations={[0, 0.4, 1]}
           style={styles.gradientOverlay}
         >
@@ -73,7 +70,7 @@ export default function ConfirmationScreen() {
               {/* LOGO IMAGE */}
               <View style={styles.logoContainer}>
                 <Image
-                  source={require('../../assets/images/logo.png')}
+                  source={require("../../assets/images/logo.png")}
                   style={styles.logoImage}
                   resizeMode="contain"
                 />
@@ -86,8 +83,8 @@ export default function ConfirmationScreen() {
                   <Text style={styles.thinTitle}>CONFIRMED!</Text>
                 </Text>
                 <Text style={styles.subtitle}>
-                  <Text style={styles.boldText}>You’re locked in.</Text> Booking request
-                  has been sent, our team will contact you soon.{' '}
+                  <Text style={styles.boldText}>You’re locked in.</Text> Booking
+                  request has been sent, our team will contact you soon.{" "}
                   <Text style={styles.boldText}>Let the games begin!</Text>
                 </Text>
               </View>
@@ -175,7 +172,7 @@ export default function ConfirmationScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: "#000000",
   },
   fullScreenBackground: {
     width: width,
@@ -203,14 +200,14 @@ const styles = StyleSheet.create({
     width: 38,
     height: 38,
     borderRadius: 20,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#FFFFFF",
+    alignItems: "center",
+    justifyContent: "center",
   },
 
-/* Logo */
+  /* Logo */
   logoContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 20,
     marginBottom: 20,
   },
@@ -221,33 +218,33 @@ const styles = StyleSheet.create({
 
   /* Title Section */
   titleSection: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 30,
   },
   mainTitle: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 32,
     letterSpacing: 1,
-    textAlign: 'center',
+    textAlign: "center",
   },
   boldTitle: {
-    fontWeight: '800',
+    fontWeight: "800",
   },
   thinTitle: {
-    fontWeight: '300',
+    fontWeight: "300",
   },
   subtitle: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: '300',
+    fontWeight: "300",
     lineHeight: 22,
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: 10,
     paddingHorizontal: 15,
   },
   boldText: {
-    fontWeight: '700',
-    color: '#FFFFFF',
+    fontWeight: "700",
+    color: "#FFFFFF",
   },
 
   /* Details Table */
@@ -255,88 +252,88 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   detailRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingVertical: 15,
   },
   detailLabel: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   detailValue: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: '300',
+    fontWeight: "300",
   },
   detailValueMuted: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: '300',
+    fontWeight: "300",
   },
   rowDivider: {
     height: 1,
-    backgroundColor: '#FFFFFF4C',
+    backgroundColor: "#FFFFFF4C",
   },
   statusPill: {
-    backgroundColor: '#00D2FF',
+    backgroundColor: "#00D2FF",
     borderRadius: 20,
     paddingVertical: 4,
     paddingHorizontal: 16,
   },
   statusText: {
-    color: '#000000',
+    color: "#000000",
     fontSize: 16,
-    fontWeight: '400',
+    fontWeight: "400",
   },
 
   /* Total Badge */
   totalBadgeContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 30,
   },
   totalBadge: {
-    backgroundColor: '#FF3B1D',
+    backgroundColor: "#FF3B1D",
     borderRadius: 35,
     paddingVertical: 14,
     paddingHorizontal: 40,
     width: 350,
-    alignItems: 'center',
+    alignItems: "center",
   },
   totalLabel: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: '300',
+    fontWeight: "300",
     marginBottom: 2,
   },
   totalValue: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 26,
-    fontWeight: '700',
+    fontWeight: "700",
     letterSpacing: 0.5,
   },
 
   /* Home Button */
   actionContainer: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   homeButton: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderRadius: 40,
     paddingVertical: 12,
     paddingHorizontal: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   buttonPressed: {
     opacity: 0.85,
     transform: [{ scale: 0.98 }],
   },
   homeButtonText: {
-    color: '#000000',
+    color: "#000000",
     fontSize: 16,
-    fontWeight: '400',
+    fontWeight: "400",
     letterSpacing: 0.8,
   },
 });
