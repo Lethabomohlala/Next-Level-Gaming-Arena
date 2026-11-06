@@ -12,12 +12,11 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Stack, useRouter } from 'expo-router';
 import { BlurView } from 'expo-blur';
-import { Feather, Ionicons } from '@expo/vector-icons';
-import SlideMenu from './SlideMenu';
+import { Feather } from '@expo/vector-icons';
+import SlideMenu from '../SlideMenu';
 
 const { width } = Dimensions.get('window');
 
-// Data for the horizontal feature cards
 const CARDS = [
   { id: '1', title: 'ULTIMATE\nGAMER\nPASS' },
   { id: '2', title: 'VIRTUAL\nREALITY' },
@@ -32,7 +31,7 @@ export default function GamingArenaScreen() {
       <Stack.Screen options={{ headerShown: false }} />
 
       <ImageBackground
-        source={require('../../assets/images/chill.png')}
+        source={require('../../../assets/images/chill.png')}
         style={styles.backgroundImage}
         resizeMode="cover"
       >
@@ -41,7 +40,7 @@ export default function GamingArenaScreen() {
           <View style={styles.topHeader}>
             <View style={styles.logoBadge}>
               <Image
-                source={require('../../assets/images/logo.png')}
+                source={require('../../../assets/images/logo.png')}
                 style={styles.logoImage}
                 resizeMode="contain"
               />
@@ -109,31 +108,6 @@ export default function GamingArenaScreen() {
               </ScrollView>
             </View>
           </ScrollView>
-
-          {/* FLOATING BOTTOM TAB BAR */}
-          <View style={styles.tabBarWrapper}>
-            <View style={styles.tabBarContainer}>
-              <TouchableOpacity style={styles.activeTab}>
-                <Ionicons name="home-outline" size={20} color="#FFFFFF" />
-                <Text style={styles.activeTabText}>Home</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.tabItem} 
-              onPress={() => router.push('/offers')}>
-                <Feather name="shopping-bag" size={20} color="#888888" />
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.tabItem}
-                onPress={() => router.push('/booking')}>
-                <Ionicons name="pricetag-outline" size={20} color="#888888" />
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.tabItem}
-                onPress={() => router.push('/contact')}>
-                <Ionicons name="chatbubble-outline" size={20} color="#888888" />
-              </TouchableOpacity>
-            </View>
-          </View>
         </SafeAreaView>
       </ImageBackground>
     </View>
@@ -158,8 +132,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingBottom: 90,
   },
-
-  /* Top Header */
   topHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -177,11 +149,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  iconButton: {
-    padding: 4,
-  },
-
-  /* Hero Section */
   heroSection: {
     alignItems: 'flex-end',
     paddingHorizontal: 20,
@@ -229,8 +196,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     letterSpacing: 0.8,
   },
-
-  /* Bottom Leaderboard Section */
   bottomLeaderboardSection: {
     marginTop: 'auto',
   },
@@ -247,8 +212,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '700',
   },
-
-  /* Horizontal Cards */
   cardsScrollContainer: {
     paddingLeft: 20,
     paddingRight: 20,
@@ -288,43 +251,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-
-  /* Floating Bottom Navigation Bar */
-  tabBarWrapper: {
-    position: 'absolute',
-    bottom: 24,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-  },
-  tabBarContainer: {
-    flexDirection: 'row',
-    backgroundColor: '#000000',
-    width: width * 0.88,
-    height: 60,
-    borderRadius: 30,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 8,
-    borderWidth: 1,
-    borderColor: '#FFFFFF1F',
-  },
-  activeTab: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FF3B00',
-    paddingVertical: 10,
-    paddingHorizontal: 18,
-    borderRadius: 22,
-    gap: 8,
-  },
-  activeTabText: {
-    color: '#FFFFFF',
-    fontWeight: '400',
-    fontSize: 14,
-  },
-  tabItem: {
-    padding: 12,
   },
 });

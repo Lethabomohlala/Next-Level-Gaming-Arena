@@ -1,4 +1,4 @@
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -6,7 +6,6 @@ import {
   Dimensions,
   Image,
   ImageBackground,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -15,7 +14,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import SlideMenu from "./SlideMenu";
+import SlideMenu from "../SlideMenu";
 
 const { width } = Dimensions.get("window");
 
@@ -30,7 +29,6 @@ export default function BookingScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
 
-  // Booking Items State (Starts empty)
   const [items, setItems] = useState<BookingItem[]>(() => {
     if (params?.existingItems) {
       try {
@@ -42,31 +40,27 @@ export default function BookingScreen() {
     return [];
   });
 
-  // Client Details Form State
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [guestCount, setGuestCount] = useState(1);
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
-  // Default to today formatted as DD-MM-YYYY
   const getFormattedDate = (d: Date) => {
     const day = String(d.getDate()).padStart(2, "0");
     const month = String(d.getMonth() + 1).padStart(2, "0");
     const year = d.getFullYear();
-    return `${day}-${month}-${year}`; // e.g., "12-10-2026"
+    return `${day}-${month}-${year}`;
   };
 
   const [dateStr, setDateStr] = useState(getFormattedDate(new Date()));
   const [dateError, setDateError] = useState("");
 
-  // Validate date is present or future
   const handleDateChange = (text: string) => {
     setDateStr(text);
     setDateError("");
   };
 
-  // Automatically add item if passed via router params from detail pages
   useEffect(() => {
     if (params?.title && params?.price) {
       const newItemTitle = String(params.title);
@@ -101,7 +95,6 @@ export default function BookingScreen() {
     }
   }, [params?.title, params?.price]);
 
-  // Quantity Handlers
   const updateQuantity = (id: string, delta: number) => {
     setItems((prevItems) =>
       prevItems.map((item) => {
@@ -135,13 +128,11 @@ export default function BookingScreen() {
   const handleProceed = () => {
     const trimmed = dateStr.trim();
     let parsedDate: Date | null = null;
-
-    // Split by hyphens or slashes (e.g., "14-10-2026" or "14/10/2026")
     const parts = trimmed.split(/[-/]/);
 
     if (parts.length === 3) {
       const day = parseInt(parts[0], 10);
-      const month = parseInt(parts[1], 10) - 1; // Months are 0-indexed in JS (0 = Jan, 9 = Oct)
+      const month = parseInt(parts[1], 10) - 1;
       const year = parseInt(parts[2], 10);
 
       if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
@@ -193,9 +184,8 @@ export default function BookingScreen() {
         contentContainerStyle={styles.scrollContent}
         bounces={false}
       >
-        {/* TOP HERO SECTION WITH BACKGROUND */}
         <ImageBackground
-          source={require("../../assets/images/booking.png")}
+          source={require("../../../assets/images/booking.png")}
           style={styles.heroBackground}
           resizeMode="cover"
         >
@@ -208,7 +198,7 @@ export default function BookingScreen() {
               <View style={styles.topHeader}>
                 <View style={styles.logoBadge}>
                   <Image
-                    source={require("../../assets/images/logo.png")}
+                    source={require("../../../assets/images/logo.png")}
                     style={styles.logoImage}
                     resizeMode="contain"
                   />
@@ -228,7 +218,6 @@ export default function BookingScreen() {
               </View>
             </SafeAreaView>
 
-            {/* ITEM CARDS OVERLAY */}
             <View style={styles.itemsListContainer}>
               {items.length === 0 ? (
                 <View style={styles.emptyContainer}>
@@ -289,7 +278,6 @@ export default function BookingScreen() {
           </LinearGradient>
         </ImageBackground>
 
-        {/* CLIENT DETAILS SECTION */}
         <View style={styles.formSection}>
           <Text style={styles.sectionHeaderTitle}>
             CLIENT <Text style={styles.thinTitle}>DETAILS</Text>
@@ -331,7 +319,6 @@ export default function BookingScreen() {
             />
           </View>
 
-          {/* DATE INPUT SECTION (Just above Number of Guests) */}
           <View style={styles.inputGroup}>
             <Text style={styles.inputLabel}>Date (DD MMM YYYY) *</Text>
             <TextInput
@@ -346,7 +333,6 @@ export default function BookingScreen() {
             ) : null}
           </View>
 
-          {/* NUMBER OF GUESTS */}
           <View style={styles.guestSection}>
             <Text style={styles.inputLabel}>Number Of Guests *</Text>
             <View style={styles.guestCounterRow}>
@@ -368,7 +354,6 @@ export default function BookingScreen() {
             </View>
           </View>
 
-          {/* CONFIRM SELECTION OPTIONS */}
           <Text style={[styles.sectionHeaderTitle, styles.confirmTitle]}>
             CONFIRM <Text style={styles.thinTitle}>SELECTION</Text>
           </Text>
@@ -401,7 +386,6 @@ export default function BookingScreen() {
             )}
           </View>
 
-          {/* ACTION BUTTONS */}
           <View style={styles.actionButtonsContainer}>
             <TouchableOpacity
               style={styles.primaryPillButton}
@@ -414,37 +398,6 @@ export default function BookingScreen() {
           </View>
         </View>
       </ScrollView>
-
-      {/* FLOATING BOTTOM TAB BAR */}
-      <View style={styles.bottomBarContainer}>
-        <View style={styles.bottomBar}>
-          <Pressable style={styles.tabItem} onPress={() => router.push("/")}>
-            <Ionicons name="home-outline" size={20} color="#888888" />
-          </Pressable>
-
-          <Pressable
-            style={styles.tabItem}
-            onPress={() => router.push("/offers")}
-          >
-            <Ionicons name="bag-handle-outline" size={20} color="#888888" />
-          </Pressable>
-
-          <Pressable
-            style={[styles.tabItem, styles.activeTab]}
-            onPress={() => router.push("/booking")}
-          >
-            <Ionicons name="pricetag" size={18} color="#FFFFFF" />
-            <Text style={styles.activeTabText}>Booking</Text>
-          </Pressable>
-
-          <Pressable
-            style={styles.tabItem}
-            onPress={() => router.push("/contact")}
-          >
-            <Ionicons name="chatbubble-outline" size={20} color="#888888" />
-          </Pressable>
-        </View>
-      </View>
     </View>
   );
 }
@@ -698,41 +651,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "400",
     letterSpacing: 0.5,
-  },
-  bottomBarContainer: {
-    position: "absolute",
-    bottom: 24,
-    left: 0,
-    right: 0,
-    alignItems: "center",
-  },
-  bottomBar: {
-    flexDirection: "row",
-    backgroundColor: "#000000",
-    width: width * 0.88,
-    height: 60,
-    borderRadius: 30,
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 8,
-    borderWidth: 1,
-    borderColor: "#FFFFFF1F",
-  },
-  activeTab: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#FF3B00",
-    paddingVertical: 10,
-    paddingHorizontal: 18,
-    borderRadius: 22,
-    gap: 8,
-  },
-  activeTabText: {
-    color: "#FFFFFF",
-    fontWeight: "400",
-    fontSize: 14,
-  },
-  tabItem: {
-    padding: 12,
   },
 });

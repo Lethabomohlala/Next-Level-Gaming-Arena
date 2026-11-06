@@ -1,9 +1,7 @@
-import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import { useState } from "react";
 import {
   Alert,
-  Dimensions,
   Image,
   Pressable,
   ScrollView,
@@ -14,20 +12,16 @@ import {
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { SafeAreaView } from "react-native-safe-area-context";
-import SlideMenu from "./SlideMenu";
-
-const { width } = Dimensions.get("window");
+import SlideMenu from "../SlideMenu";
 
 export default function ContactScreen() {
   const router = useRouter();
 
-  // Form State
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
 
-  // Form Submission Handler
   const handleSendMessage = () => {
     if (!name.trim() || !email.trim() || !phone.trim() || !message.trim()) {
       Alert.alert(
@@ -63,7 +57,7 @@ export default function ContactScreen() {
         <View style={styles.topHeader}>
           <View style={styles.logoBadge}>
             <Image
-              source={require("../../assets/images/logo.png")}
+              source={require("../../../assets/images/logo.png")}
               style={styles.logoImage}
               resizeMode="contain"
             />
@@ -148,7 +142,6 @@ export default function ContactScreen() {
 
           {/* CONTACT FORM */}
           <View style={styles.formContainer}>
-            {/* NAME & SURNAME */}
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Name & Surname *</Text>
               <TextInput
@@ -160,7 +153,6 @@ export default function ContactScreen() {
               />
             </View>
 
-            {/* EMAIL ADDRESS */}
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Email Address *</Text>
               <TextInput
@@ -174,7 +166,6 @@ export default function ContactScreen() {
               />
             </View>
 
-            {/* PHONE NUMBER */}
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Phone Number *</Text>
               <TextInput
@@ -187,7 +178,6 @@ export default function ContactScreen() {
               />
             </View>
 
-            {/* MESSAGE */}
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Message *</Text>
               <TextInput
@@ -202,7 +192,6 @@ export default function ContactScreen() {
               />
             </View>
 
-            {/* SUBMIT BUTTON */}
             <View style={styles.submitContainer}>
               <Pressable
                 style={({ pressed }) => [
@@ -216,41 +205,6 @@ export default function ContactScreen() {
             </View>
           </View>
         </ScrollView>
-
-        {/* FLOATING BOTTOM TAB BAR */}
-        <View style={styles.bottomBarContainer}>
-          <View style={styles.bottomBar}>
-            {/* HOME TAB */}
-            <Pressable style={styles.tabItem} onPress={() => router.push("/")}>
-              <Ionicons name="home-outline" size={20} color="#888888" />
-            </Pressable>
-
-            {/* OFFERS / PACKAGES TAB */}
-            <Pressable
-              style={styles.tabItem}
-              onPress={() => router.push("/offers")}
-            >
-              <Ionicons name="bag-handle-outline" size={20} color="#888888" />
-            </Pressable>
-
-            {/* BOOKING TAB */}
-            <Pressable
-              style={styles.tabItem}
-              onPress={() => router.push("/booking")}
-            >
-              <Ionicons name="pricetag-outline" size={20} color="#888888" />
-            </Pressable>
-
-            {/* CHAT / SUPPORT TAB (ACTIVE) */}
-            <Pressable
-              style={[styles.tabItem, styles.activeTab]}
-              onPress={() => router.push("/contact")}
-            >
-              <Ionicons name="chatbubble" size={18} color="#FFFFFF" />
-              <Text style={styles.activeTabText}>Contact Us</Text>
-            </Pressable>
-          </View>
-        </View>
       </SafeAreaView>
     </View>
   );
@@ -268,8 +222,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingBottom: 110,
   },
-
-  /* Header */
   topHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -288,8 +240,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-
-  /* Main Title */
   titleContainer: {
     alignItems: "center",
     marginTop: 20,
@@ -310,8 +260,6 @@ const styles = StyleSheet.create({
   sparkle: {
     color: "#FFFFFF",
   },
-
-  /* Info Section */
   infoSection: {
     alignItems: "center",
     gap: 20,
@@ -332,8 +280,6 @@ const styles = StyleSheet.create({
     fontWeight: "300",
     textAlign: "center",
   },
-
-  /* Map Container */
   mapCardContainer: {
     alignItems: "center",
     marginBottom: 30,
@@ -353,8 +299,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-
-  /* Sub Header */
   subHeaderContainer: {
     alignItems: "center",
     marginBottom: 30,
@@ -365,8 +309,6 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     textAlign: "center",
   },
-
-  /* Form */
   formContainer: {
     gap: 20,
   },
@@ -391,8 +333,6 @@ const styles = StyleSheet.create({
     height: 120,
     paddingTop: 14,
   },
-
-  /* Submit Button */
   submitContainer: {
     alignItems: "center",
     marginTop: 20,
@@ -414,43 +354,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "400",
     letterSpacing: 0.8,
-  },
-
-  /* Floating Bottom Navigation Bar */
-  bottomBarContainer: {
-    position: "absolute",
-    bottom: 25,
-    left: 0,
-    right: 0,
-    alignItems: "center",
-  },
-  bottomBar: {
-    flexDirection: "row",
-    backgroundColor: "#000000",
-    borderRadius: 30,
-    borderWidth: 1,
-    borderColor: "#222222",
-    paddingHorizontal: 8,
-    paddingVertical: 6,
-    alignItems: "center",
-    width: width * 0.88,
-    justifyContent: "space-between",
-  },
-  tabItem: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-  activeTab: {
-    backgroundColor: "#FF3B1D",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    paddingHorizontal: 16,
-  },
-  activeTabText: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    fontWeight: "400",
   },
 });

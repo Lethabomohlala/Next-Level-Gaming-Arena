@@ -1,21 +1,19 @@
+// src/app/(tabs)/offers.tsx
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import {
-    Dimensions,
-    Image,
-    ImageBackground,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  Image,
+  ImageBackground,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import SlideMenu from "./SlideMenu";
-
-const { width } = Dimensions.get("window");
+import SlideMenu from "../SlideMenu";
 
 interface OfferCardProps {
   title: string;
@@ -101,7 +99,7 @@ export default function OffersScreen() {
       >
         {/* HERO SECTION */}
         <ImageBackground
-          source={require("../../assets/images/offers.png")}
+          source={require("../../../assets/images/offers.png")}
           style={styles.heroBackground}
           resizeMode="cover"
         >
@@ -115,7 +113,7 @@ export default function OffersScreen() {
               <View style={styles.topHeader}>
                 <View style={styles.logoBadge}>
                   <Image
-                    source={require("../../assets/images/logo.png")}
+                    source={require("../../../assets/images/logo.png")}
                     style={styles.logoImage}
                     resizeMode="contain"
                   />
@@ -185,37 +183,6 @@ export default function OffersScreen() {
           </View>
         </View>
       </ScrollView>
-
-      {/* FLOATING BOTTOM TAB BAR */}
-      <View style={styles.bottomBarContainer}>
-        <View style={styles.bottomBar}>
-          
-          {/* HOME TAB */}
-          <Pressable style={styles.tabItem} onPress={() => router.push("/")}>
-            <Ionicons name="home-outline" size={20} color="#888888" />
-          </Pressable>
-
-          {/* OFFERS / PACKAGES TAB (ACTIVE) */}
-          <Pressable
-            style={[styles.tabItem, styles.activeTab]}
-            onPress={() => router.push("/offers")}>
-            <Ionicons name="bag-handle" size={18} color="#FFFFFF" />
-            <Text style={styles.activeTabText}>Offers</Text>
-          </Pressable>
-
-          {/* DISCOUNTS / PROMOS TAB */}
-          <Pressable style={styles.tabItem} 
-            onPress={() => router.push("/booking")}>
-            <Ionicons name="pricetag-outline" size={20} color="#888888" />
-          </Pressable>
-
-          {/* CHAT / SUPPORT TAB */}
-          <Pressable style={styles.tabItem}
-            onPress={() => router.push('/contact')}>
-            <Ionicons name="chatbubble-outline" size={20} color="#888888" />
-          </Pressable>
-        </View>
-      </View>
     </View>
   );
 }
@@ -228,8 +195,6 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 110,
   },
-
-  /* Hero */
   heroBackground: {
     width: "100%",
     height: 400,
@@ -257,8 +222,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-
-  /* Main Body */
   contentContainer: {
     paddingHorizontal: 20,
     marginTop: -20,
@@ -288,8 +251,6 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontWeight: "900",
   },
-
-  /* Toggle Switch */
   toggleContainer: {
     flexDirection: "row",
     backgroundColor: "#000000",
@@ -317,8 +278,6 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     letterSpacing: 0.5,
   },
-
-  /* Offer Cards */
   cardsList: {
     width: "100%",
     gap: 20,
@@ -370,43 +329,5 @@ const styles = StyleSheet.create({
   arrowButtonPressed: {
     opacity: 0.8,
     transform: [{ scale: 0.96 }],
-  },
-
-  /* Floating Bottom Navigation Bar */
-  bottomBarContainer: {
-    position: "absolute",
-    bottom: 25,
-    left: 0,
-    right: 0,
-    alignItems: "center",
-  },
-  bottomBar: {
-    flexDirection: "row",
-    backgroundColor: "#000000",
-    borderRadius: 30,
-    borderWidth: 1,
-    borderColor: "#222222",
-    paddingHorizontal: 8,
-    paddingVertical: 6,
-    alignItems: "center",
-    width: width * 0.88,
-    justifyContent: "space-between",
-  },
-  tabItem: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-  activeTab: {
-    backgroundColor: "#FF3B1D",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    paddingHorizontal: 16,
-  },
-  activeTabText: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    fontWeight: "400",
   },
 });
