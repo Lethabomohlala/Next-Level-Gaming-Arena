@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import { Feather, Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import {
+  Dimensions,
+  Image,
+  ImageBackground,
+  Pressable,
+  ScrollView,
   StyleSheet,
   Text,
-  View,
-  ImageBackground,
-  Image,
-  ScrollView,
   TextInput,
   TouchableOpacity,
-  Pressable,
-  Dimensions,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Feather, Ionicons } from '@expo/vector-icons';
-import SlideMenu from './SlideMenu';
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import SlideMenu from "./SlideMenu";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 interface BookingItem {
   id: string;
@@ -42,13 +42,29 @@ export default function BookingScreen() {
     return [];
   });
 
-
   // Client Details Form State
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [guestCount, setGuestCount] = useState(1);
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+
+  // Default to today formatted as DD-MM-YYYY
+  const getFormattedDate = (d: Date) => {
+    const day = String(d.getDate()).padStart(2, "0");
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const year = d.getFullYear();
+    return `${day}-${month}-${year}`; // e.g., "12-10-2026"
+  };
+
+  const [dateStr, setDateStr] = useState(getFormattedDate(new Date()));
+  const [dateError, setDateError] = useState("");
+
+  // Validate date is present or future
+  const handleDateChange = (text: string) => {
+    setDateStr(text);
+    setDateError("");
+  };
 
   // Automatically add item if passed via router params from detail pages
   useEffect(() => {
@@ -57,11 +73,11 @@ export default function BookingScreen() {
       const newItemPrice = Number(params.price);
 
       setItems((prevItems) => {
-        // Check if this exact title is already in the list
-        const existingIndex = prevItems.findIndex((i) => i.title === newItemTitle);
+        const existingIndex = prevItems.findIndex(
+          (i) => i.title === newItemTitle,
+        );
 
         if (existingIndex > -1) {
-          // If it exists, increment its quantity
           const updated = [...prevItems];
           updated[existingIndex] = {
             ...updated[existingIndex],
@@ -70,7 +86,6 @@ export default function BookingScreen() {
           return updated;
         }
 
-        // If it's a new unique offer, add it to the list
         return [
           ...prevItems,
           {
@@ -82,7 +97,6 @@ export default function BookingScreen() {
         ];
       });
 
-      // Clear params to prevent duplicate triggers
       router.setParams({ title: undefined, price: undefined });
     }
   }, [params?.title, params?.price]);
@@ -96,7 +110,7 @@ export default function BookingScreen() {
           return { ...item, quantity: newQty > 0 ? newQty : 1 };
         }
         return item;
-      })
+      }),
     );
   };
 
@@ -105,7 +119,7 @@ export default function BookingScreen() {
       const removedItem = prevItems.find((item) => item.id === id);
       if (removedItem) {
         setSelectedOptions((prev) =>
-          prev.filter((title) => title !== removedItem.title)
+          prev.filter((title) => title !== removedItem.title),
         );
       }
       return prevItems.filter((item) => item.id !== id);
@@ -114,10 +128,60 @@ export default function BookingScreen() {
 
   const toggleSelectionOption = (title: string) => {
     setSelectedOptions((prev) =>
-      prev.includes(title)
-        ? prev.filter((t) => t !== title)
-        : [...prev, title]
+      prev.includes(title) ? prev.filter((t) => t !== title) : [...prev, title],
     );
+  };
+
+  const handleProceed = () => {
+    const trimmed = dateStr.trim();
+    let parsedDate: Date | null = null;
+
+    // Split by hyphens or slashes (e.g., "14-10-2026" or "14/10/2026")
+    const parts = trimmed.split(/[-/]/);
+
+    if (parts.length === 3) {
+      const day = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1; // Months are 0-indexed in JS (0 = Jan, 9 = Oct)
+      const year = parseInt(parts[2], 10);
+
+      if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+        parsedDate = new Date(year, month, day);
+      }
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (!parsedDate || isNaN(parsedDate.getTime())) {
+      setDateError("Please enter a valid date format (e.g., 12-10-2026)");
+      return;
+    }
+
+    if (parsedDate < today) {
+      setDateError(
+        "Cannot select a date in the past. Please choose today or a future date.",
+      );
+      return;
+    }
+
+    setDateError("");
+
+    const total = items.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0,
+    );
+    router.push({
+      pathname: "/fees",
+      params: {
+        items: JSON.stringify(items),
+        name,
+        email,
+        phone,
+        date: dateStr,
+        guestCount: String(guestCount),
+        totalAmount: String(total > 0 ? total.toFixed(2) : "3881.25"),
+      },
+    });
   };
 
   return (
@@ -131,21 +195,20 @@ export default function BookingScreen() {
       >
         {/* TOP HERO SECTION WITH BACKGROUND */}
         <ImageBackground
-          source={require('../../assets/images/booking.png')}
+          source={require("../../assets/images/booking.png")}
           style={styles.heroBackground}
           resizeMode="cover"
         >
           <LinearGradient
-            colors={['rgba(0,0,0,0.4)', 'rgba(0,0,0,0.7)', '#000000']}
+            colors={["rgba(0,0,0,0.4)", "rgba(0,0,0,0.7)", "#000000"]}
             locations={[0, 0.6, 1]}
             style={styles.gradientOverlay}
           >
             <SafeAreaView style={styles.safeHeaderArea}>
-              {/* TOP HEADER */}
               <View style={styles.topHeader}>
                 <View style={styles.logoBadge}>
                   <Image
-                    source={require('../../assets/images/logo.png')}
+                    source={require("../../assets/images/logo.png")}
                     style={styles.logoImage}
                     resizeMode="contain"
                   />
@@ -211,10 +274,12 @@ export default function BookingScreen() {
 
               <TouchableOpacity
                 style={styles.addPackagesButton}
-                onPress={() => router.push({
-                  pathname: '/offers',
-                  params: { existingItems: JSON.stringify(items) }
-                })}
+                onPress={() =>
+                  router.push({
+                    pathname: "/offers",
+                    params: { existingItems: JSON.stringify(items) },
+                  })
+                }
               >
                 <Text style={styles.addPackagesText}>
                   ADD PACKAGES/EXPERIENCES
@@ -258,12 +323,27 @@ export default function BookingScreen() {
             <Text style={styles.inputLabel}>Phone Number *</Text>
             <TextInput
               style={styles.textInput}
-              placeholder="081-992-4545"
+              placeholder="0819924545"
               placeholderTextColor="#afafaf"
               keyboardType="phone-pad"
               value={phone}
               onChangeText={setPhone}
             />
+          </View>
+
+          {/* DATE INPUT SECTION (Just above Number of Guests) */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>Date (DD MMM YYYY) *</Text>
+            <TextInput
+              style={styles.textInput}
+              placeholder="12-10-2026"
+              placeholderTextColor="#afafaf"
+              value={dateStr}
+              onChangeText={handleDateChange}
+            />
+            {dateError ? (
+              <Text style={styles.errorText}>{dateError}</Text>
+            ) : null}
           </View>
 
           {/* NUMBER OF GUESTS */}
@@ -325,14 +405,11 @@ export default function BookingScreen() {
           <View style={styles.actionButtonsContainer}>
             <TouchableOpacity
               style={styles.primaryPillButton}
-              onPress={() =>
-                router.push({
-                  pathname: '/fees',
-                  params: { items: JSON.stringify(items) },
-                })
-              }
+              onPress={handleProceed}
             >
-              <Text style={styles.primaryButtonText}>PROCEED TO CALCULATOR</Text>
+              <Text style={styles.primaryButtonText}>
+                PROCEED TO CALCULATOR
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -341,30 +418,29 @@ export default function BookingScreen() {
       {/* FLOATING BOTTOM TAB BAR */}
       <View style={styles.bottomBarContainer}>
         <View style={styles.bottomBar}>
-          
-          {/* HOME */}
-          <Pressable style={styles.tabItem} onPress={() => router.push('/')}>
+          <Pressable style={styles.tabItem} onPress={() => router.push("/")}>
             <Ionicons name="home-outline" size={20} color="#888888" />
           </Pressable>
 
-          {/* OFFERS */}
           <Pressable
             style={styles.tabItem}
-            onPress={() => router.push('/offers')}>
+            onPress={() => router.push("/offers")}
+          >
             <Ionicons name="bag-handle-outline" size={20} color="#888888" />
           </Pressable>
 
-          {/* BOOKINGS */}
           <Pressable
             style={[styles.tabItem, styles.activeTab]}
-            onPress={() => router.push('/booking')}>
+            onPress={() => router.push("/booking")}
+          >
             <Ionicons name="pricetag" size={18} color="#FFFFFF" />
             <Text style={styles.activeTabText}>Booking</Text>
           </Pressable>
 
-          {/* CONTACT US */}
-          <Pressable style={styles.tabItem}
-            onPress={() => router.push('/contact')}>
+          <Pressable
+            style={styles.tabItem}
+            onPress={() => router.push("/contact")}
+          >
             <Ionicons name="chatbubble-outline" size={20} color="#888888" />
           </Pressable>
         </View>
@@ -376,7 +452,7 @@ export default function BookingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: "#000000",
   },
   scrollContent: {
     paddingBottom: 110,
@@ -391,44 +467,44 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
   },
   topHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 20,
     paddingTop: 10,
   },
   logoBadge: {
     width: 44,
     height: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   logoImage: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   heroTitleContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingHorizontal: 20,
     marginBottom: 30,
   },
   heroTitle: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 32,
     marginTop: 60,
-    fontWeight: '800',
+    fontWeight: "800",
     letterSpacing: 1,
-    textAlign: 'center',
+    textAlign: "center",
   },
   thinTitle: {
-    fontWeight: '300',
+    fontWeight: "300",
   },
   heroSubtitle: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: '300',
+    fontWeight: "300",
     lineHeight: 20,
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: 20,
   },
   itemsListContainer: {
@@ -436,43 +512,43 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   emptyContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: 10,
   },
   emptyText: {
-    color: '#888888',
+    color: "#888888",
     fontSize: 14,
-    textAlign: 'center',
+    textAlign: "center",
   },
   itemCard: {
-    backgroundColor: '#000000BF',
+    backgroundColor: "#000000BF",
     borderRadius: 40,
     borderWidth: 1,
-    borderColor: '#FFFFFF',
+    borderColor: "#FFFFFF",
     paddingHorizontal: 25,
     paddingVertical: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   itemInfo: {
     flex: 1,
   },
   itemTitle: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: "700",
     letterSpacing: 0.5,
   },
   itemPrice: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: '400',
+    fontWeight: "400",
     marginTop: 8,
   },
   controlsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 10,
   },
   qtyButton: {
@@ -480,14 +556,14 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderColor: "#FFFFFF",
+    alignItems: "center",
+    justifyContent: "center",
   },
   qtyText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: "700",
     marginHorizontal: 2,
   },
   trashContainer: {
@@ -495,29 +571,29 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   addPackagesButton: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderRadius: 40,
     paddingVertical: 15,
     paddingHorizontal: 20,
-    alignSelf: 'center',
+    alignSelf: "center",
     marginTop: 20,
   },
   addPackagesText: {
-    color: '#000000',
+    color: "#000000",
     fontSize: 16,
-    fontWeight: '400',
+    fontWeight: "400",
     letterSpacing: 0.5,
   },
   formSection: {
     paddingHorizontal: 40,
     paddingTop: 30,
-    backgroundColor: '#000000',
+    backgroundColor: "#000000",
   },
   sectionHeaderTitle: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 22,
-    fontWeight: '800',
-    textAlign: 'center',
+    fontWeight: "800",
+    textAlign: "center",
     letterSpacing: 1,
     marginBottom: 20,
   },
@@ -525,27 +601,33 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   inputLabel: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: '400',
+    fontWeight: "400",
     marginBottom: 8,
   },
   textInput: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderRadius: 40,
     paddingHorizontal: 20,
     paddingVertical: 15,
     fontSize: 16,
-    color: '#000000',
+    color: "#000000",
+  },
+  errorText: {
+    color: "#FF3B30",
+    fontSize: 12,
+    marginTop: 6,
+    marginLeft: 20,
   },
   guestSection: {
     marginTop: 10,
     marginBottom: 30,
   },
   guestCounterRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 30,
     marginTop: 10,
   },
@@ -554,14 +636,14 @@ const styles = StyleSheet.create({
     height: 32,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderColor: "#FFFFFF",
+    alignItems: "center",
+    justifyContent: "center",
   },
   guestCountText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 22,
-    fontWeight: '400',
+    fontWeight: "400",
   },
   confirmTitle: {
     marginTop: 10,
@@ -572,13 +654,13 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   noItemsText: {
-    color: '#888888',
+    color: "#888888",
     fontSize: 14,
-    textAlign: 'center',
+    textAlign: "center",
   },
   radioOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 14,
   },
   radioCircle: {
@@ -586,68 +668,68 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 11,
     borderWidth: 1,
-    borderColor: '#FFFFFF',
+    borderColor: "#FFFFFF",
   },
   radioCircleActive: {
-    borderColor: '#FFFFFF',
-    backgroundColor: '#FFFFFF',
+    borderColor: "#FFFFFF",
+    backgroundColor: "#FFFFFF",
   },
   radioText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: '400',
+    fontWeight: "400",
     letterSpacing: 0.5,
   },
   actionButtonsContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     gap: 14,
     marginTop: 10,
   },
   primaryPillButton: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderRadius: 40,
     paddingVertical: 15,
     paddingHorizontal: 20,
     width: 250,
-    alignItems: 'center',
+    alignItems: "center",
   },
   primaryButtonText: {
-    color: '#000000',
+    color: "#000000",
     fontSize: 16,
-    fontWeight: '400',
+    fontWeight: "400",
     letterSpacing: 0.5,
   },
   bottomBarContainer: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 24,
     left: 0,
     right: 0,
-    alignItems: 'center',
+    alignItems: "center",
   },
   bottomBar: {
-    flexDirection: 'row',
-    backgroundColor: '#000000',
+    flexDirection: "row",
+    backgroundColor: "#000000",
     width: width * 0.88,
     height: 60,
     borderRadius: 30,
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 8,
     borderWidth: 1,
-    borderColor: '#FFFFFF1F',
+    borderColor: "#FFFFFF1F",
   },
   activeTab: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FF3B00',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FF3B00",
     paddingVertical: 10,
     paddingHorizontal: 18,
     borderRadius: 22,
     gap: 8,
   },
   activeTabText: {
-    color: '#FFFFFF',
-    fontWeight: '400',
+    color: "#FFFFFF",
+    fontWeight: "400",
     fontSize: 14,
   },
   tabItem: {

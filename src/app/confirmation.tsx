@@ -20,17 +20,19 @@ export default function ConfirmationScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
 
-  // Parse parameters or fallback to default UI display values
+  // Extract submitted client and booking data with fallbacks matching your screenshot layout
   const totalAmount = params?.totalAmount ? String(params.totalAmount) : '3 881.25';
-  const bookingId = params?.bookingId ? String(params.bookingId) : '#NLG22384';
-  const bookingDate = params?.date ? String(params.date) : '28 Sept 2026';
+  const bookingId = params?.bookingId ? String(params.bookingId) : '#NLG-22384';
+  const fullName = params?.name ? String(params.name) : 'John Doe';
+  const email = params?.email ? String(params.email) : 'Johndoe@example.com';
+  const phone = params?.phone ? String(params.phone) : '0819924545';
+  const bookingDate = params?.date ? String(params.date) : '10 Oct 2026';
+  const guestCount = params?.guestCount ? String(params.guestCount) : '1';
 
-  // Handle Back Button: Clear booking parameters and return to Offers screen
   const handleClearAndGoToOffers = () => {
     router.replace('/offers');
   };
 
-  // Handle Home Button: Return directly to index.tsx
   const handleGoToHome = () => {
     router.replace('/');
   };
@@ -56,12 +58,12 @@ export default function ConfirmationScreen() {
           <SafeAreaView style={styles.safeArea}>
             {/* TOP HEADER */}
             <View style={styles.topHeader}>
-            <Pressable
+              <Pressable
                 style={styles.backButton}
                 onPress={handleClearAndGoToOffers}
-            >
+              >
                 <Ionicons name="arrow-back" size={20} color="#000000" />
-            </Pressable>
+              </Pressable>
             </View>
 
             <ScrollView
@@ -99,8 +101,32 @@ export default function ConfirmationScreen() {
                 <View style={styles.rowDivider} />
 
                 <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>Full Name</Text>
+                  <Text style={styles.detailValue}>{fullName}</Text>
+                </View>
+                <View style={styles.rowDivider} />
+
+                <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>Email</Text>
+                  <Text style={styles.detailValue}>{email}</Text>
+                </View>
+                <View style={styles.rowDivider} />
+
+                <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>Phone Number</Text>
+                  <Text style={styles.detailValue}>{phone}</Text>
+                </View>
+                <View style={styles.rowDivider} />
+
+                <View style={styles.detailRow}>
                   <Text style={styles.detailLabel}>Date</Text>
                   <Text style={styles.detailValue}>{bookingDate}</Text>
+                </View>
+                <View style={styles.rowDivider} />
+
+                <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>Number of Guests</Text>
+                  <Text style={styles.detailValue}>{guestCount}</Text>
                 </View>
                 <View style={styles.rowDivider} />
 
@@ -127,17 +153,17 @@ export default function ConfirmationScreen() {
               </View>
 
               {/* BACK TO HOME BUTTON */}
-                <View style={styles.actionContainer}>
+              <View style={styles.actionContainer}>
                 <Pressable
-                    style={({ pressed }) => [
+                  style={({ pressed }) => [
                     styles.homeButton,
                     pressed && styles.buttonPressed,
-                    ]}
-                    onPress={handleGoToHome}
+                  ]}
+                  onPress={handleGoToHome}
                 >
-                    <Text style={styles.homeButtonText}>BACK TO HOME</Text>
+                  <Text style={styles.homeButtonText}>BACK TO HOME</Text>
                 </Pressable>
-                </View>
+              </View>
             </ScrollView>
           </SafeAreaView>
         </LinearGradient>

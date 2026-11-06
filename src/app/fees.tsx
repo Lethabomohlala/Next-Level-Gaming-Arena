@@ -82,7 +82,11 @@ export default function FeesScreen() {
 
     router.push({
       pathname: '/confirmation',
-      params: { totalAmount: finalCost.toFixed(2) },
+      params: {
+        ...params, // Carries forward name, email, phone, date, guestCount, items from booking.tsx
+        totalAmount: finalCost.toFixed(2), // Overwrites or updates with the final calculated cost
+        bookingId: '#NLG' + Math.floor(10000 + Math.random() * 90000), // Generates a unique booking ID
+      },
     });
   };
 
