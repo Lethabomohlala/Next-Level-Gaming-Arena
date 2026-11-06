@@ -1,6 +1,5 @@
-// src/app/(tabs)/offers.tsx
 import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
+import { BlurView } from "expo-blur";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import {
@@ -24,7 +23,7 @@ interface OfferCardProps {
 
 function OfferCard({ title, description, price, onPress }: OfferCardProps) {
   return (
-    <View style={styles.cardContainer}>
+    <BlurView intensity={30} tint="dark" style={styles.cardContainer}>
       <View style={styles.cardContent}>
         <View style={styles.cardTextWrapper}>
           <Text style={styles.cardTitle}>{title}</Text>
@@ -38,10 +37,10 @@ function OfferCard({ title, description, price, onPress }: OfferCardProps) {
           ]}
           onPress={onPress}
         >
-          <Ionicons name="arrow-forward" size={20} color="#000000" />
+          <Ionicons name="arrow-forward" size={18} color="#000000" />
         </Pressable>
       </View>
-    </View>
+    </BlurView>
   );
 }
 
@@ -93,96 +92,93 @@ export default function OffersScreen() {
     <View style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
+      <ImageBackground
+        source={require("../../../assets/images/offers.png")}
+        style={styles.backgroundImage}
+        resizeMode="cover"
       >
-        {/* HERO SECTION */}
-        <ImageBackground
-          source={require("../../../assets/images/offers.png")}
-          style={styles.heroBackground}
-          resizeMode="cover"
-        >
-          <LinearGradient
-            colors={["rgba(0,0,0,0.1)", "rgba(0,0,0,0.5)", "#000000"]}
-            locations={[0, 0.6, 1]}
-            style={styles.gradientOverlay}
-          >
-            <SafeAreaView style={styles.safeArea}>
-              {/* TOP HEADER */}
-              <View style={styles.topHeader}>
-                <View style={styles.logoBadge}>
-                  <Image
-                    source={require("../../../assets/images/logo.png")}
-                    style={styles.logoImage}
-                    resizeMode="contain"
-                  />
-                </View>
-                <SlideMenu />
-              </View>
-            </SafeAreaView>
-          </LinearGradient>
-        </ImageBackground>
-
-        {/* CONTENT SECTION */}
-        <View style={styles.contentContainer}>
-          {/* TITLE */}
-          <Text style={styles.mainTitle}>
-            PACKAGES <Text style={styles.accentText}>&</Text>
-            {"\n"}
-            EXPERIENCES
-          </Text>
-
-          {/* SUBTITLE */}
-          <Text style={styles.subtitle}>
-            Whether you're pushing for the top of the leaderboard or looking for
-            an unforgettable day out with friends,{" "}
-            <Text style={styles.boldText}>Next Level</Text> delivers an
-            immersive offerings tailored to you.
-          </Text>
-
-          {/* TOGGLE BAR */}
-          <View style={styles.toggleContainer}>
-            <Pressable
-              style={[
-                styles.toggleButton,
-                activeTab === "packages" && styles.activeToggleButton,
-              ]}
-              onPress={() => setActiveTab("packages")}
-            >
-              <Text style={styles.toggleText}>PACKAGES</Text>
-            </Pressable>
-
-            <Pressable
-              style={[
-                styles.toggleButton,
-                activeTab === "experiences" && styles.activeToggleButton,
-              ]}
-              onPress={() => setActiveTab("experiences")}
-            >
-              <Text style={styles.toggleText}>EXPERIENCES</Text>
-            </Pressable>
-          </View>
-
-          {/* CARDS LIST */}
-          <View style={styles.cardsList}>
-            {currentData.map((item) => (
-              <OfferCard
-                key={item.id}
-                title={item.title}
-                description={item.description}
-                price={item.price}
-                onPress={() =>
-                  router.push({
-                    pathname: item.route as any,
-                    params: { existingItems: params?.existingItems },
-                  })
-                }
+        <SafeAreaView style={styles.safeArea}>
+          {/* TOP HEADER */}
+          <View style={styles.topHeader}>
+            <View style={styles.logoBadge}>
+              <Image
+                source={require("../../../assets/images/logo.png")}
+                style={styles.logoImage}
+                resizeMode="contain"
               />
-            ))}
+            </View>
+            <SlideMenu />
           </View>
-        </View>
-      </ScrollView>
+
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+          >
+            {/* CONTENT SECTION */}
+            <View style={styles.contentContainer}>
+              {/* TITLE */}
+              <Text style={styles.mainTitle}>
+                PACKAGES <Text style={styles.accentText}>&</Text>
+                {"\n"}
+                EXPERIENCES
+              </Text>
+
+              {/* SUBTITLE */}
+              <Text style={styles.subtitle}>
+                Whether you're pushing for the top of the leaderboard or looking
+                for an unforgettable day out with friends,{" "}
+                <Text style={styles.boldText}>Next Level</Text> delivers an
+                immersive offerings tailored to you.
+              </Text>
+
+              {/* TOGGLE BAR */}
+              <BlurView
+                intensity={25}
+                tint="dark"
+                style={styles.toggleContainer}
+              >
+                <Pressable
+                  style={[
+                    styles.toggleButton,
+                    activeTab === "packages" && styles.activeToggleButton,
+                  ]}
+                  onPress={() => setActiveTab("packages")}
+                >
+                  <Text style={styles.toggleText}>PACKAGES</Text>
+                </Pressable>
+
+                <Pressable
+                  style={[
+                    styles.toggleButton,
+                    activeTab === "experiences" && styles.activeToggleButton,
+                  ]}
+                  onPress={() => setActiveTab("experiences")}
+                >
+                  <Text style={styles.toggleText}>EXPERIENCES</Text>
+                </Pressable>
+              </BlurView>
+
+              {/* CARDS LIST */}
+              <View style={styles.cardsList}>
+                {currentData.map((item) => (
+                  <OfferCard
+                    key={item.id}
+                    title={item.title}
+                    description={item.description}
+                    price={item.price}
+                    onPress={() =>
+                      router.push({
+                        pathname: item.route as any,
+                        params: { existingItems: params?.existingItems },
+                      })
+                    }
+                  />
+                ))}
+              </View>
+            </View>
+          </ScrollView>
+        </SafeAreaView>
+      </ImageBackground>
     </View>
   );
 }
@@ -192,15 +188,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#000000",
   },
-  scrollContent: {
-    paddingBottom: 110,
-  },
-  heroBackground: {
-    width: "100%",
-    height: 400,
-  },
-  gradientOverlay: {
+  backgroundImage: {
     flex: 1,
+    width: "100%",
+    height: "100%",
   },
   safeArea: {
     flex: 1,
@@ -222,45 +213,49 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
+  scrollContent: {
+    paddingBottom: 110,
+  },
   contentContainer: {
     paddingHorizontal: 20,
-    marginTop: -20,
+    marginTop: 20,
     alignItems: "center",
   },
   mainTitle: {
     color: "#FFFFFF",
-    fontSize: 30,
+    fontSize: 40,
     fontWeight: "700",
     textAlign: "center",
-    letterSpacing: 1,
-    lineHeight: 32,
+    letterSpacing: 0.5,
+    lineHeight: 38,
   },
   accentText: {
-    color: "#FF3B1D",
+    color: "#FFFFFF",
   },
   subtitle: {
-    color: "#ffffff",
-    fontSize: 14,
+    color: "#FFFFFF",
+    fontSize: 16,
     fontWeight: "300",
-    lineHeight: 18,
+    lineHeight: 20,
     textAlign: "center",
+    maxWidth: "80%",
     marginTop: 10,
     marginHorizontal: 10,
   },
   boldText: {
     color: "#FFFFFF",
-    fontWeight: "900",
+    fontWeight: "700",
   },
   toggleContainer: {
     flexDirection: "row",
-    backgroundColor: "#000000",
     borderRadius: 40,
-    borderWidth: 1,
-    borderColor: "#222222",
+    borderWidth: 0.5,
+    borderColor: "#FFFFFF",
     padding: 3,
     marginTop: 20,
-    marginBottom: 30,
+    marginBottom: 20,
     width: "100%",
+    overflow: "hidden",
   },
   toggleButton: {
     flex: 1,
@@ -270,25 +265,25 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   activeToggleButton: {
-    backgroundColor: "#FF3B1D",
+    backgroundColor: "#5F1DAB",
   },
   toggleText: {
     color: "#FFFFFF",
     fontSize: 14,
-    fontWeight: "700",
+    fontWeight: "500",
     letterSpacing: 0.5,
   },
   cardsList: {
     width: "100%",
-    gap: 20,
+    gap: 15,
   },
   cardContainer: {
-    backgroundColor: "#000000",
-    borderRadius: 40,
-    borderWidth: 1,
-    borderColor: "#333333",
+    borderRadius: 30,
+    borderWidth: 0.5,
+    borderColor: "#FFFFFF",
     paddingHorizontal: 20,
-    paddingVertical: 22,
+    paddingVertical: 20,
+    overflow: "hidden",
   },
   cardContent: {
     flexDirection: "row",
@@ -303,14 +298,14 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "700",
-    letterSpacing: 0.8,
-    marginBottom: 8,
+    letterSpacing: 0.5,
+    marginBottom: 6,
   },
   cardDescription: {
     color: "#FFFFFF",
     fontSize: 14,
     fontWeight: "300",
-    lineHeight: 18,
+    lineHeight: 20,
     marginBottom: 10,
   },
   cardPrice: {
@@ -319,9 +314,9 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   arrowButton: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: "#FFFFFF",
     alignItems: "center",
     justifyContent: "center",
