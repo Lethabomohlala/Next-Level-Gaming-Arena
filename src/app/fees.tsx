@@ -1,20 +1,20 @@
-import React from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import React from "react";
 import {
+  Dimensions,
+  Image,
+  ImageBackground,
+  Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
-  ImageBackground,
-  ScrollView,
-  Pressable,
-  Alert,
-  Dimensions,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 interface FeeItem {
   title: string;
@@ -27,18 +27,13 @@ export default function FeesScreen() {
   const params = useLocalSearchParams();
 
   // Parse items passed from booking screen
-  let items: FeeItem[] = [
-    { title: 'ULTIMATE GAMER PASS', price: 1500, quantity: 1 },
-    { title: 'ESPORTS TRAINING', price: 1500, quantity: 1 },
-    { title: 'VIRTUAL REALITY', price: 750, quantity: 1 },
-    { title: 'ESCAPE ROOM CHALLENGE', price: 750, quantity: 1 },
-  ];
+  let items: FeeItem[] = [];
 
   if (params?.items) {
     try {
       items = JSON.parse(String(params.items));
     } catch (e) {
-      // Fallback to defaults if parsing fails
+      items = [];
     }
   }
 
@@ -58,7 +53,7 @@ export default function FeesScreen() {
     discountRate = 0.15; // 15%
   }
 
-  // Financial Calculations
+  // Financial Calculations (Calculated directly from base package/experience prices)
   const subtotal = items.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
@@ -70,22 +65,13 @@ export default function FeesScreen() {
   const vatAmount = discountedTotal * vatRate;
   const finalCost = discountedTotal + vatAmount;
 
-  // Handle proceeding to booking with 0 cost check
-  const handleProceedToBooking = () => {
-    if (subtotal <= 0) {
-      Alert.alert(
-        'Empty Booking',
-        'Please add at least one package/experience to your booking before proceeding.'
-      );
-      return;
-    }
-
+  const handleConfirmBooking = () => {
     router.push({
-      pathname: '/confirmation',
+      pathname: "/confirmation",
       params: {
-        ...params, // Carries forward name, email, phone, date, guestCount, items from booking.tsx
-        totalAmount: finalCost.toFixed(2), // Overwrites or updates with the final calculated cost
-        bookingId: '#NLG' + Math.floor(10000 + Math.random() * 90000), // Generates a unique booking ID
+        ...params,
+        totalAmount: finalCost.toFixed(2),
+        bookingId: "#NLG" + Math.floor(10000 + Math.random() * 90000),
       },
     });
   };
@@ -95,44 +81,50 @@ export default function FeesScreen() {
       <Stack.Screen options={{ headerShown: false }} />
 
       <ImageBackground
-        source={require('../../assets/images/booking3.png')}
-        style={styles.fullScreenBackground}
+        source={require("../../assets/images/booking3.png")}
+        style={styles.backgroundImage}
         resizeMode="cover"
       >
-        <LinearGradient
-          colors={['rgba(0,0,0,0.6)', 'rgba(0,0,0,0.8)', 'rgba(0,0,0,0.95)']}
-          locations={[0, 0.4, 1]}
-          style={styles.gradientOverlay}
-        >
-          <SafeAreaView style={styles.safeArea}>
-            {/* TOP HEADER */}
-            <View style={styles.topHeader}>
-              <Pressable
-                style={styles.backButton}
-                onPress={() => router.back()}
-              >
-                <Ionicons name="arrow-back" size={20} color="#000000" />
-              </Pressable>
+        {/* Semi-transparent dark overlay */}
+        <View style={styles.backgroundOverlay} />
+
+        <SafeAreaView style={styles.safeArea}>
+          {/* TOP HEADER */}
+          <View style={styles.topHeader}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => router.back()}
+            >
+              <Ionicons name="arrow-back" size={20} color="#000000" />
+            </Pressable>
+
+            <View style={styles.logoBadge}>
+              <Image
+                source={require("../../assets/images/logo.png")}
+                style={styles.logoImage}
+                resizeMode="contain"
+              />
+            </View>
+          </View>
+
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+          >
+            {/* HEADER TITLE SECTION */}
+            <View style={styles.headerTitleSection}>
+              <Text style={styles.mainTitle}>
+                KNOW{"\n"}
+                <Text style={styles.boldTitle}>YOUR COST</Text>
+              </Text>
+              <Text style={styles.subtitle}>
+                Transparent pricing at a glance. Review your savings, total
+                tax, and final cost before securing your spot.
+              </Text>
             </View>
 
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.scrollContent}
-            >
-              {/* HEADER TITLE */}
-              <View style={styles.headerTitleSection}>
-                <Text style={styles.mainTitle}>
-                    <Text style={styles.sparkle}>✶ </Text>
-                    <Text style={styles.boldTitle}>KNOW</Text> YOUR{' '}
-                    <Text style={styles.boldTitle}>COST</Text>
-                    <Text style={styles.sparkle}> ✶</Text>
-                </Text>
-                <Text style={styles.subtitle}>
-                  Transparent pricing at a glance. Review your savings, total
-                  tax, and final cost before securing your spot.
-                </Text>
-              </View>
-
+            {/* FROSTED GLASS COST CONTAINER */}
+            <BlurView intensity={30} tint="dark" style={styles.glassContainer}>
               {/* ITEMIZED LIST */}
               <View style={styles.itemListContainer}>
                 {items.map((item, index) => (
@@ -150,25 +142,33 @@ export default function FeesScreen() {
               {/* COST BREAKDOWN SECTION */}
               <View style={styles.breakdownSection}>
                 <View style={styles.breakdownRow}>
-                  <Text style={styles.breakdownLabel}>SUBTOTAL</Text>
-                  <Text style={styles.breakdownValueCyan}>R {subtotal}</Text>
-                </View>
-
-                <View style={styles.breakdownRow}>
-                  <Text style={styles.breakdownLabelMuted}>
-                    Discount ({discountRate * 100}%)
-                  </Text>
-                  <Text style={styles.breakdownValueMuted}>
-                    -R {discountAmount.toFixed(2)}
-                  </Text>
-                </View>
-
-                <View style={styles.breakdownRow}>
-                  <Text style={styles.breakdownLabelCyan}>DISCOUNTED TOTAL</Text>
+                  <Text style={styles.breakdownLabelCyan}>SUBTOTAL</Text>
                   <Text style={styles.breakdownValueCyan}>
-                    R {discountedTotal.toFixed(2)}
+                    R {subtotal.toLocaleString()}
                   </Text>
                 </View>
+
+                {discountRate > 0 && (
+                  <>
+                    <View style={styles.breakdownRow}>
+                      <Text style={styles.breakdownLabelMuted}>
+                        Discount ({discountRate * 100}%)
+                      </Text>
+                      <Text style={styles.breakdownValueMuted}>
+                        -R {discountAmount.toFixed(2)}
+                      </Text>
+                    </View>
+
+                    <View style={styles.breakdownRow}>
+                      <Text style={styles.breakdownLabelCyan}>
+                        DISCOUNTED TOTAL
+                      </Text>
+                      <Text style={styles.breakdownValueCyan}>
+                        R {discountedTotal.toFixed(2)}
+                      </Text>
+                    </View>
+                  </>
+                )}
 
                 <View style={styles.spacingMedium} />
 
@@ -196,35 +196,32 @@ export default function FeesScreen() {
                   R {finalCost.toFixed(2)}
                 </Text>
               </View>
+            </BlurView>
 
-             {/* ACTION BUTTONS */}
-                <View style={styles.actionButtonsContainer}>
-                <Pressable
-                    style={({ pressed }) => [
-                    styles.primaryButton,
-                    subtotal <= 0 && styles.disabledButton,
-                    pressed && styles.buttonPressed,
-                    ]}
-                    onPress={handleProceedToBooking}
-                >
-                    <Text style={styles.primaryButtonText}>
-                    PROCEED TO BOOKING
-                    </Text>
-                </Pressable>
+            {/* ACTION BUTTONS */}
+            <View style={styles.actionButtonsContainer}>
+              <Pressable
+                style={({ pressed }) => [
+                  styles.primaryButton,
+                  pressed && styles.buttonPressed,
+                ]}
+                onPress={handleConfirmBooking}
+              >
+                <Text style={styles.primaryButtonText}>CONFIRM BOOKING</Text>
+              </Pressable>
 
-                <Pressable
-                    style={({ pressed }) => [
-                    styles.primaryButton,
-                    pressed && styles.buttonPressed,
-                    ]}
-                    onPress={() => router.back()}
-                >
-                    <Text style={styles.primaryButtonText}>CANCEL BOOKING</Text>
-                </Pressable>
-                </View>
-            </ScrollView>
-          </SafeAreaView>
-        </LinearGradient>
+              <Pressable
+                style={({ pressed }) => [
+                  styles.primaryButton,
+                  pressed && styles.buttonPressed,
+                ]}
+                onPress={() => router.replace("/(tabs)")}
+              >
+                <Text style={styles.primaryButtonText}>CANCEL</Text>
+              </Pressable>
+            </View>
+          </ScrollView>
+        </SafeAreaView>
       </ImageBackground>
     </View>
   );
@@ -233,165 +230,176 @@ export default function FeesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: "#000000",
   },
-  fullScreenBackground: {
-    width: width,
-    height: height,
+  backgroundImage: {
     flex: 1,
+    width: "100%",
+    height: "100%",
   },
-  gradientOverlay: {
-    flex: 1,
+  backgroundOverlay: {
+    ...StyleSheet.absoluteFill,
+    backgroundColor: "rgba(0, 0, 0, 0.45)",
   },
   safeArea: {
     flex: 1,
   },
-  scrollContent: {
-    paddingHorizontal: 24,
-    paddingBottom: 40,
-  },
   topHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 20,
-    paddingTop: 40,
-    zIndex: 10,
+    paddingTop: 10,
   },
   backButton: {
-    width: 38,
-    height: 38,
-    borderRadius: 20,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "#FFFFFF",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  logoBadge: {
+    width: 44,
+    height: 48,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  logoImage: {
+    width: "100%",
+    height: "100%",
+  },
+  scrollContent: {
+    paddingHorizontal: 20,
+    paddingBottom: 40,
   },
   headerTitleSection: {
-    marginTop: 40,
-    marginBottom: 20,
-    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 24,
+    alignItems: "center",
   },
   mainTitle: {
-    color: '#FFFFFF',
-    fontSize: 32,
-    fontWeight: '300',
-    letterSpacing: 1,
-    textAlign: 'center',
-  },
-  boldTitle: {
-    fontWeight: '800',
-  },
-  sparkle: {
-    color: '#FFFFFF',
-  },
-  subtitle: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    lineHeight: 22,
-    textAlign: 'center',
-    marginTop: 10,
-    paddingHorizontal: 40,
-  },
-  itemListContainer: {
-    gap: 10,
-  },
-  itemRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 4,
-  },
-  itemTitle: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '700',
+    color: "#FFFFFF",
+    fontSize: 40,
+    fontWeight: "800",
+    lineHeight: 38,
+    textAlign: "center",
     letterSpacing: 0.5,
   },
-  itemPrice: {
-    color: '#FFFFFF',
+  boldTitle: {
+    fontWeight: "800",
+  },
+  subtitle: {
+    color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: "400",
+    lineHeight: 20,
+    textAlign: "center",
+    marginTop: 10,
+    maxWidth: width * 0.75,
+  },
+  glassContainer: {
+    borderRadius: 30,
+    borderWidth: 0.8,
+    borderColor: "#FFFFFF",
+    paddingHorizontal: 20,
+    paddingVertical: 24,
+    overflow: "hidden",
+    marginBottom: 30,
+  },
+  itemListContainer: {
+    gap: 12,
+  },
+  itemRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  itemTitle: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "500",
+    letterSpacing: 0.5,
+    flex: 1,
+    paddingRight: 10,
+  },
+  itemPrice: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "300",
   },
   divider: {
     height: 1,
-    backgroundColor: '#FFFFFF4C',
-    marginVertical: 25,
+    backgroundColor: "#FFFFFF4C",
+    marginVertical: 18,
   },
   breakdownSection: {
-    gap: 8,
+    gap: 10,
   },
   breakdownRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  breakdownLabel: {
-    color: '#00D2FF',
-    fontSize: 16,
-    fontWeight: '700',
-    letterSpacing: 0.5,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   breakdownLabelCyan: {
-    color: '#00D2FF',
+    color: "#00D2FF",
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: "700",
     letterSpacing: 0.5,
   },
   breakdownValueCyan: {
-    color: '#00D2FF',
+    color: "#00D2FF",
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   breakdownLabelMuted: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: '300',
+    fontWeight: "500",
   },
   breakdownValueMuted: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: '300',
+    fontWeight: "300",
   },
   spacingMedium: {
-    height: 8,
+    height: 6,
   },
   finalCostRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 40,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   finalCostLabel: {
-    color: '#00D2FF',
-    fontSize: 20,
-    fontWeight: '800',
+    color: "#00D2FF",
+    fontSize: 16,
+    fontWeight: "700",
     letterSpacing: 1,
   },
   finalCostValue: {
-    color: '#00D2FF',
-    fontSize: 20,
-    fontWeight: '800',
+    color: "#00D2FF",
+    fontSize: 16,
+    fontWeight: "700",
   },
   actionButtonsContainer: {
-    gap: 14,
-    alignItems: 'center',
+    gap: 0,
+    alignItems: "center",
   },
   primaryButton: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 40,
+    backgroundColor: "#FFFFFF",
     paddingVertical: 14,
-    width: 250,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  disabledButton: {
-    opacity: 0.6,
+    paddingHorizontal: 36,
+    borderRadius: 30,
+    marginTop: 20,
   },
   buttonPressed: {
     opacity: 0.85,
     transform: [{ scale: 0.98 }],
   },
   primaryButtonText: {
-    color: '#000000',
+    color: "#000000",
     fontSize: 16,
-    fontWeight: '400',
-    letterSpacing: 1,
+    fontWeight: "500",
+    letterSpacing: 0.8,
   },
 });
