@@ -80,8 +80,34 @@ export default function BookingScreen() {
       }),
     );
 
+// Validation checks for required fields
     if (selectedItems.length === 0) {
-      alert("Please select at least one package or experience to book.");
+      alert("Please complete all required fields and select at least one package or experience to continue.");
+      return;
+    }
+
+    if (!name.trim()) {
+      alert("Please enter your Name & Surname.");
+      return;
+    }
+
+    if (!email.trim()) {
+      alert("Please enter your Email Address.");
+      return;
+    }
+
+    if (!phone.trim()) {
+      alert("Please enter your Phone Number.");
+      return;
+    }
+
+    if (!dateStr.trim()) {
+      alert("Please select or enter a valid Date.");
+      return;
+    }
+
+    if (!stationPass) {
+      alert("Please select a Station Pass duration.");
       return;
     }
 
