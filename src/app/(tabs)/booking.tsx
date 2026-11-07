@@ -1,11 +1,12 @@
-import { Feather } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
+import { Feather, Ionicons } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Dimensions,
   Image,
   ImageBackground,
+  Modal,
   ScrollView,
   StyleSheet,
   Text,
@@ -18,33 +19,39 @@ import SlideMenu from "../SlideMenu";
 
 const { width } = Dimensions.get("window");
 
-interface BookingItem {
+interface CatalogItem {
   id: string;
   title: string;
   price: number;
-  quantity: number;
+  type: "package" | "experience";
 }
+
+const CATALOG: CatalogItem[] = [
+  { id: "1", title: "ULTIMATE GAMER PASS", price: 1500, type: "package" },
+  { id: "2", title: "ESPORTS TRAINING", price: 1500, type: "package" },
+  { id: "3", title: "VIRTUAL REALITY", price: 750, type: "experience" },
+  { id: "4", title: "ESCAPE ROOM CHALLENGE", price: 750, type: "experience" },
+];
+
+const STATION_PASS_OPTIONS = ["1 Hour Pass", "2 Hours Pass | Popular"];
 
 export default function BookingScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
 
-  const [items, setItems] = useState<BookingItem[]>(() => {
-    if (params?.existingItems) {
-      try {
-        return JSON.parse(String(params.existingItems));
-      } catch (e) {
-        return [];
-      }
-    }
-    return [];
+  const [quantities, setQuantities] = useState<{ [key: string]: number }>({
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
   });
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [stationPass, setStationPass] = useState("");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [guestCount, setGuestCount] = useState(1);
-  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
   const getFormattedDate = (d: Date) => {
     const day = String(d.getDate()).padStart(2, "0");
@@ -54,123 +61,46 @@ export default function BookingScreen() {
   };
 
   const [dateStr, setDateStr] = useState(getFormattedDate(new Date()));
-  const [dateError, setDateError] = useState("");
 
-  const handleDateChange = (text: string) => {
-    setDateStr(text);
-    setDateError("");
-  };
-
-  useEffect(() => {
-    if (params?.title && params?.price) {
-      const newItemTitle = String(params.title);
-      const newItemPrice = Number(params.price);
-
-      setItems((prevItems) => {
-        const existingIndex = prevItems.findIndex(
-          (i) => i.title === newItemTitle,
-        );
-
-        if (existingIndex > -1) {
-          const updated = [...prevItems];
-          updated[existingIndex] = {
-            ...updated[existingIndex],
-            quantity: updated[existingIndex].quantity + 1,
-          };
-          return updated;
-        }
-
-        return [
-          ...prevItems,
-          {
-            id: Date.now().toString() + Math.random(),
-            title: newItemTitle,
-            price: newItemPrice,
-            quantity: 1,
-          },
-        ];
-      });
-
-      router.setParams({ title: undefined, price: undefined });
-    }
-  }, [params?.title, params?.price]);
-
-  const updateQuantity = (id: string, delta: number) => {
-    setItems((prevItems) =>
-      prevItems.map((item) => {
-        if (item.id === id) {
-          const newQty = item.quantity + delta;
-          return { ...item, quantity: newQty > 0 ? newQty : 1 };
-        }
-        return item;
-      }),
-    );
-  };
-
-  const removeItem = (id: string) => {
-    setItems((prevItems) => {
-      const removedItem = prevItems.find((item) => item.id === id);
-      if (removedItem) {
-        setSelectedOptions((prev) =>
-          prev.filter((title) => title !== removedItem.title),
-        );
-      }
-      return prevItems.filter((item) => item.id !== id);
+  const handleQtyChange = (id: string, delta: number) => {
+    setQuantities((prev) => {
+      const current = prev[id] || 0;
+      const next = Math.max(0, current + delta);
+      return { ...prev, [id]: next };
     });
   };
 
-  const toggleSelectionOption = (title: string) => {
-    setSelectedOptions((prev) =>
-      prev.includes(title) ? prev.filter((t) => t !== title) : [...prev, title],
+  const handleCalculateFees = () => {
+    const selectedItems = CATALOG.filter((item) => quantities[item.id] > 0).map(
+      (item) => ({
+        id: item.id,
+        title: item.title,
+        price: item.price,
+        quantity: quantities[item.id],
+      }),
     );
-  };
 
-  const handleProceed = () => {
-    const trimmed = dateStr.trim();
-    let parsedDate: Date | null = null;
-    const parts = trimmed.split(/[-/]/);
-
-    if (parts.length === 3) {
-      const day = parseInt(parts[0], 10);
-      const month = parseInt(parts[1], 10) - 1;
-      const year = parseInt(parts[2], 10);
-
-      if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
-        parsedDate = new Date(year, month, day);
-      }
-    }
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    if (!parsedDate || isNaN(parsedDate.getTime())) {
-      setDateError("Please enter a valid date format (e.g., 12-10-2026)");
+    if (selectedItems.length === 0) {
+      alert("Please select at least one package or experience to book.");
       return;
     }
 
-    if (parsedDate < today) {
-      setDateError(
-        "Cannot select a date in the past. Please choose today or a future date.",
-      );
-      return;
-    }
-
-    setDateError("");
-
-    const total = items.reduce(
+    const total = selectedItems.reduce(
       (sum, item) => sum + item.price * item.quantity,
       0,
     );
+
     router.push({
       pathname: "/fees",
       params: {
-        items: JSON.stringify(items),
+        items: JSON.stringify(selectedItems),
         name,
         email,
         phone,
         date: dateStr,
+        stationPass,
         guestCount: String(guestCount),
-        totalAmount: String(total > 0 ? total.toFixed(2) : "3881.25"),
+        totalAmount: String(total.toFixed(2)),
       },
     });
   };
@@ -179,225 +109,277 @@ export default function BookingScreen() {
     <View style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-        bounces={false}
+      <ImageBackground
+        source={require("../../../assets/images/booking.png")}
+        style={styles.backgroundImage}
+        resizeMode="cover"
       >
-        <ImageBackground
-          source={require("../../../assets/images/booking.png")}
-          style={styles.heroBackground}
-          resizeMode="cover"
-        >
-          <LinearGradient
-            colors={["rgba(0,0,0,0.4)", "rgba(0,0,0,0.7)", "#000000"]}
-            locations={[0, 0.6, 1]}
-            style={styles.gradientOverlay}
+        {/* Semi-transparent dark overlay */}
+        <View style={styles.backgroundOverlay} />
+
+        <SafeAreaView style={styles.safeArea}>
+          {/* TOP HEADER */}
+          <View style={styles.topHeader}>
+            <View style={styles.logoBadge}>
+              <Image
+                source={require("../../../assets/images/logo.png")}
+                style={styles.logoImage}
+                resizeMode="contain"
+              />
+            </View>
+            <SlideMenu />
+          </View>
+
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
           >
-            <SafeAreaView style={styles.safeHeaderArea}>
-              <View style={styles.topHeader}>
-                <View style={styles.logoBadge}>
-                  <Image
-                    source={require("../../../assets/images/logo.png")}
-                    style={styles.logoImage}
-                    resizeMode="contain"
-                  />
-                </View>
-                <SlideMenu />
-              </View>
+            {/* HERO SECTION */}
+            <View style={styles.heroSection}>
+              <Text style={styles.heroTitle}>SELECT{"\n"}YOUR THRILL</Text>
 
-              <View style={styles.heroTitleContainer}>
-                <Text style={styles.heroTitle}>
-                  SELECT YOUR <Text style={styles.thinTitle}>THRILL</Text>
-                </Text>
-                <Text style={styles.heroSubtitle}>
-                  Choose one or more experiences to build your ultimate gaming
-                  session. Adjust quantities or add multiple packages to your
-                  booking before confirming your details.
-                </Text>
-              </View>
-            </SafeAreaView>
+              <Text style={styles.heroSubtitle}>
+                Choose one or more experiences to build your ultimate gaming
+                session. Adjust quantities or add multiple packages to your
+                booking before confirming your details.
+              </Text>
+            </View>
 
-            <View style={styles.itemsListContainer}>
-              {items.length === 0 ? (
-                <View style={styles.emptyContainer}>
-                  <Text style={styles.emptyText}>
-                    No packages or experiences added yet.
+            {/* AVAILABLE PACKAGES */}
+            <View style={styles.sectionContainer}>
+              <Text style={styles.sectionHeader}>
+                <Text style={styles.boldTitle}>AVAILABLE</Text> PACKAGES
+              </Text>
+
+              {CATALOG.filter((i) => i.type === "package").map((item) => (
+                <BlurView
+                  key={item.id}
+                  intensity={30}
+                  tint="dark"
+                  style={styles.selectionCard}
+                >
+                  <Text style={styles.itemTitle}>
+                    {item.title} <Text style={styles.priceDivider}>|</Text> R{" "}
+                    {item.price}
                   </Text>
-                </View>
-              ) : (
-                items.map((item) => (
-                  <View key={item.id} style={styles.itemCard}>
-                    <View style={styles.itemInfo}>
-                      <Text style={styles.itemTitle}>{item.title}</Text>
-                      <Text style={styles.itemPrice}>R {item.price}</Text>
-                    </View>
-
-                    <View style={styles.controlsRow}>
-                      <TouchableOpacity
-                        style={styles.qtyButton}
-                        onPress={() => updateQuantity(item.id, -1)}
-                      >
-                        <Feather name="minus" size={20} color="#FFFFFF" />
-                      </TouchableOpacity>
-
-                      <Text style={styles.qtyText}>{item.quantity}</Text>
-
-                      <TouchableOpacity
-                        style={styles.qtyButton}
-                        onPress={() => updateQuantity(item.id, 1)}
-                      >
-                        <Feather name="plus" size={20} color="#FFFFFF" />
-                      </TouchableOpacity>
-
-                      <TouchableOpacity
-                        style={styles.trashContainer}
-                        onPress={() => removeItem(item.id)}
-                      >
-                        <Feather name="trash-2" size={20} color="#FFFFFF" />
-                      </TouchableOpacity>
-                    </View>
+                  <View style={styles.counterContainer}>
+                    <TouchableOpacity
+                      style={styles.counterBtn}
+                      onPress={() => handleQtyChange(item.id, -1)}
+                    >
+                      <Feather name="minus" size={14} color="#FFFFFF" />
+                    </TouchableOpacity>
+                    <Text style={styles.counterText}>
+                      {quantities[item.id]}
+                    </Text>
+                    <TouchableOpacity
+                      style={styles.counterBtn}
+                      onPress={() => handleQtyChange(item.id, 1)}
+                    >
+                      <Feather name="plus" size={14} color="#FFFFFF" />
+                    </TouchableOpacity>
                   </View>
-                ))
-              )}
+                </BlurView>
+              ))}
+            </View>
 
+            {/* AVAILABLE EXPERIENCES */}
+            <View style={styles.sectionContainer}>
+              <Text style={styles.sectionHeader}>
+                <Text style={styles.boldTitle}>AVAILABLE</Text> EXPERIENCES
+              </Text>
+
+              {CATALOG.filter((i) => i.type === "experience").map((item) => (
+                <BlurView
+                  key={item.id}
+                  intensity={30}
+                  tint="dark"
+                  style={styles.selectionCard}
+                >
+                  <Text style={styles.itemTitle}>
+                    {item.title} <Text style={styles.priceDivider}>|</Text> R{" "}
+                    {item.price}
+                  </Text>
+                  <View style={styles.counterContainer}>
+                    <TouchableOpacity
+                      style={styles.counterBtn}
+                      onPress={() => handleQtyChange(item.id, -1)}
+                    >
+                      <Feather name="minus" size={14} color="#FFFFFF" />
+                    </TouchableOpacity>
+                    <Text style={styles.counterText}>
+                      {quantities[item.id]}
+                    </Text>
+                    <TouchableOpacity
+                      style={styles.counterBtn}
+                      onPress={() => handleQtyChange(item.id, 1)}
+                    >
+                      <Feather name="plus" size={14} color="#FFFFFF" />
+                    </TouchableOpacity>
+                  </View>
+                </BlurView>
+              ))}
+            </View>
+
+            {/* CLIENT DETAILS FORM */}
+            <View style={styles.formContainer}>
+              <Text style={styles.sectionHeader}>
+                <Text style={styles.boldTitle}>CLIENT</Text> DETAILS
+              </Text>
+
+              {/* NAME */}
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Name & Surname *</Text>
+                <TextInput
+                  style={styles.textInput}
+                  placeholder="John Doe"
+                  placeholderTextColor="#888888"
+                  value={name}
+                  onChangeText={setName}
+                />
+              </View>
+
+              {/* EMAIL */}
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Email Address *</Text>
+                <TextInput
+                  style={styles.textInput}
+                  placeholder="Johndoe@example.com"
+                  placeholderTextColor="#888888"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  value={email}
+                  onChangeText={setEmail}
+                />
+              </View>
+
+              {/* PHONE */}
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Phone Number *</Text>
+                <TextInput
+                  style={styles.textInput}
+                  placeholder="0819924545"
+                  placeholderTextColor="#888888"
+                  keyboardType="phone-pad"
+                  value={phone}
+                  onChangeText={setPhone}
+                />
+              </View>
+
+              {/* DATE */}
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Date ( DD MMM YYYY) *</Text>
+                <TextInput
+                  style={styles.textInput}
+                  placeholder="06-11-2026"
+                  placeholderTextColor="#888888"
+                  value={dateStr}
+                  onChangeText={setDateStr}
+                />
+              </View>
+
+              {/* STATION PASS DROPDOWN */}
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Station Pass *</Text>
+                <TouchableOpacity
+                  style={styles.dropdownInput}
+                  onPress={() => setIsDropdownOpen(true)}
+                  activeOpacity={0.8}
+                >
+                  <Text
+                    style={
+                      stationPass
+                        ? styles.dropdownValueText
+                        : styles.dropdownPlaceholderText
+                    }
+                  >
+                    {stationPass || "Select Session Length"}
+                  </Text>
+                  <Ionicons name="chevron-down" size={18} color="#FF3B00" />
+                </TouchableOpacity>
+              </View>
+
+              <Text style={styles.disclaimerText}>
+                <Text style={styles.disclaimerBold}>Disclaimer</Text> | Specific booking hours and any 
+                additional fees are pending final admin confirmation. A mandatory 15-minute
+                sanitization buffer applies after play ends.
+              </Text>
+
+              {/* GUESTS COUNTER */}
+              <View style={styles.guestSection}>
+                <Text style={styles.inputLabel}>Number Of Guests *</Text>
+                <View style={styles.guestRow}>
+                  <TouchableOpacity
+                    style={styles.guestCircleBtn}
+                    onPress={() =>
+                      setGuestCount((prev) => Math.max(1, prev - 1))
+                    }
+                  >
+                    <Feather name="minus" size={18} color="#FFFFFF" />
+                  </TouchableOpacity>
+
+                  <Text style={styles.guestCountText}>{guestCount}</Text>
+
+                  <TouchableOpacity
+                    style={styles.guestCircleBtn}
+                    onPress={() => setGuestCount((prev) => prev + 1)}
+                  >
+                    <Feather name="plus" size={18} color="#FFFFFF" />
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              {/* CALCULATE FEES BUTTON */}
               <TouchableOpacity
-                style={styles.addPackagesButton}
-                onPress={() =>
-                  router.push({
-                    pathname: "/offers",
-                    params: { existingItems: JSON.stringify(items) },
-                  })
-                }
+                style={styles.primaryButton}
+                onPress={handleCalculateFees}
               >
-                <Text style={styles.addPackagesText}>
-                  ADD PACKAGES/EXPERIENCES
+                <Text style={styles.primaryButtonText}>CALCULATE FEES</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </SafeAreaView>
+      </ImageBackground>
+
+      {/* DROPDOWN MODAL FOR STATION PASS */}
+      <Modal
+        visible={isDropdownOpen}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setIsDropdownOpen(false)}
+      >
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setIsDropdownOpen(false)}
+        >
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Select Session Length</Text>
+            {STATION_PASS_OPTIONS.map((option, idx) => (
+              <TouchableOpacity
+                key={idx}
+                style={[
+                  styles.modalOption,
+                  stationPass === option && styles.modalOptionSelected,
+                ]}
+                onPress={() => {
+                  setStationPass(option);
+                  setIsDropdownOpen(false);
+                }}
+              >
+                <Text
+                  style={[
+                    styles.modalOptionText,
+                    stationPass === option && styles.modalOptionTextSelected,
+                  ]}
+                >
+                  {option}
                 </Text>
               </TouchableOpacity>
-            </View>
-          </LinearGradient>
-        </ImageBackground>
-
-        <View style={styles.formSection}>
-          <Text style={styles.sectionHeaderTitle}>
-            CLIENT <Text style={styles.thinTitle}>DETAILS</Text>
-          </Text>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Name & Surname *</Text>
-            <TextInput
-              style={styles.textInput}
-              placeholder="John Doe"
-              placeholderTextColor="#afafaf"
-              value={name}
-              onChangeText={setName}
-            />
+            ))}
           </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Email Address *</Text>
-            <TextInput
-              style={styles.textInput}
-              placeholder="Johndoe@example.com"
-              placeholderTextColor="#afafaf"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              value={email}
-              onChangeText={setEmail}
-            />
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Phone Number *</Text>
-            <TextInput
-              style={styles.textInput}
-              placeholder="0819924545"
-              placeholderTextColor="#afafaf"
-              keyboardType="phone-pad"
-              value={phone}
-              onChangeText={setPhone}
-            />
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>Date (DD MMM YYYY) *</Text>
-            <TextInput
-              style={styles.textInput}
-              placeholder="12-10-2026"
-              placeholderTextColor="#afafaf"
-              value={dateStr}
-              onChangeText={handleDateChange}
-            />
-            {dateError ? (
-              <Text style={styles.errorText}>{dateError}</Text>
-            ) : null}
-          </View>
-
-          <View style={styles.guestSection}>
-            <Text style={styles.inputLabel}>Number Of Guests *</Text>
-            <View style={styles.guestCounterRow}>
-              <TouchableOpacity
-                style={styles.guestQtyButton}
-                onPress={() => setGuestCount((prev) => Math.max(1, prev - 1))}
-              >
-                <Feather name="minus" size={20} color="#FFFFFF" />
-              </TouchableOpacity>
-
-              <Text style={styles.guestCountText}>{guestCount}</Text>
-
-              <TouchableOpacity
-                style={styles.guestQtyButton}
-                onPress={() => setGuestCount((prev) => prev + 1)}
-              >
-                <Feather name="plus" size={20} color="#FFFFFF" />
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <Text style={[styles.sectionHeaderTitle, styles.confirmTitle]}>
-            CONFIRM <Text style={styles.thinTitle}>SELECTION</Text>
-          </Text>
-
-          <View style={styles.radioGroup}>
-            {items.length === 0 ? (
-              <Text style={styles.noItemsText}>
-                Add packages above to confirm selection.
-              </Text>
-            ) : (
-              items.map((item) => {
-                const isSelected = selectedOptions.includes(item.title);
-                return (
-                  <TouchableOpacity
-                    key={item.id}
-                    style={styles.radioOption}
-                    onPress={() => toggleSelectionOption(item.title)}
-                    activeOpacity={0.8}
-                  >
-                    <View
-                      style={[
-                        styles.radioCircle,
-                        isSelected && styles.radioCircleActive,
-                      ]}
-                    />
-                    <Text style={styles.radioText}>{item.title}</Text>
-                  </TouchableOpacity>
-                );
-              })
-            )}
-          </View>
-
-          <View style={styles.actionButtonsContainer}>
-            <TouchableOpacity
-              style={styles.primaryPillButton}
-              onPress={handleProceed}
-            >
-              <Text style={styles.primaryButtonText}>
-                PROCEED TO CALCULATOR
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </ScrollView>
+        </TouchableOpacity>
+      </Modal>
     </View>
   );
 }
@@ -407,17 +389,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#000000",
   },
-  scrollContent: {
-    paddingBottom: 110,
+  backgroundImage: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
   },
-  heroBackground: {
-    width: width,
+  backgroundOverlay: {
+    ...StyleSheet.absoluteFill,
+    backgroundColor: "rgba(0, 0, 0, 0.15)",
   },
-  gradientOverlay: {
-    paddingBottom: 20,
-  },
-  safeHeaderArea: {
-    paddingHorizontal: 0,
+  safeArea: {
+    flex: 1,
   },
   topHeader: {
     flexDirection: "row",
@@ -436,158 +418,161 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-  heroTitleContainer: {
-    alignItems: "center",
+  scrollContent: {
+    paddingBottom: 110,
     paddingHorizontal: 20,
-    marginBottom: 30,
+  },
+  heroSection: {
+    alignItems: "center",
+    marginTop: 20,
+    marginBottom: 20,
   },
   heroTitle: {
     color: "#FFFFFF",
-    fontSize: 32,
-    marginTop: 60,
-    fontWeight: "800",
+    fontSize: 40,
+    fontWeight: "700",
     letterSpacing: 1,
     textAlign: "center",
   },
-  thinTitle: {
-    fontWeight: "300",
+  boldTitle: {
+    fontWeight: "800",
   },
   heroSubtitle: {
     color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: "300",
+    fontWeight: "400",
     lineHeight: 20,
     textAlign: "center",
-    marginTop: 20,
+    marginTop: 10,
+    maxWidth: width * 0.75,
   },
-  itemsListContainer: {
-    paddingHorizontal: 20,
-    gap: 16,
-  },
-  emptyContainer: {
+  sectionContainer: {
+    marginBottom: 20,
     alignItems: "center",
-    paddingVertical: 10,
   },
-  emptyText: {
-    color: "#888888",
-    fontSize: 14,
+  sectionHeader: {
+    color: "#FFFFFF",
+    fontSize: 24,
+    fontWeight: "400",
+    letterSpacing: 1,
     textAlign: "center",
+    marginBottom: 15,
   },
-  itemCard: {
-    backgroundColor: "#000000BF",
-    borderRadius: 40,
-    borderWidth: 1,
-    borderColor: "#FFFFFF",
-    paddingHorizontal: 25,
-    paddingVertical: 20,
+  selectionCard: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-  },
-  itemInfo: {
-    flex: 1,
+    borderRadius: 30,
+    borderWidth: 0.8,
+    borderColor: "#FFFFFF",
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    width: "100%",
+    marginBottom: 15,
+    overflow: "hidden",
   },
   itemTitle: {
     color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "700",
+    fontSize: 14,
+    fontWeight: "500",
     letterSpacing: 0.5,
   },
-  itemPrice: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "400",
-    marginTop: 8,
+  priceDivider: {
+    color: "#FFFFFF88",
+    fontWeight: "300",
   },
-  controlsRow: {
+  counterContainer: {
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
   },
-  qtyButton: {
+  counterBtn: {
     width: 24,
     height: 24,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#FFFFFF",
+    borderColor: "#FFFFFF88",
     alignItems: "center",
     justifyContent: "center",
   },
-  qtyText: {
+  counterText: {
     color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "700",
-    marginHorizontal: 2,
-  },
-  trashContainer: {
-    marginLeft: 6,
-    padding: 4,
-  },
-  addPackagesButton: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 40,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    alignSelf: "center",
-    marginTop: 20,
-  },
-  addPackagesText: {
-    color: "#000000",
-    fontSize: 16,
-    fontWeight: "400",
-    letterSpacing: 0.5,
-  },
-  formSection: {
-    paddingHorizontal: 40,
-    paddingTop: 30,
-    backgroundColor: "#000000",
-  },
-  sectionHeaderTitle: {
-    color: "#FFFFFF",
-    fontSize: 22,
-    fontWeight: "800",
+    fontSize: 14,
+    fontWeight: "500",
+    minWidth: 16,
     textAlign: "center",
-    letterSpacing: 1,
-    marginBottom: 20,
+  },
+  formContainer: {
+    marginTop: 10,
+    alignItems: "center",
   },
   inputGroup: {
-    marginBottom: 20,
+    width: "100%",
+    marginBottom: 15,
   },
   inputLabel: {
     color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "400",
-    marginBottom: 8,
+    fontSize: 18,
+    fontWeight: "500",
+    marginBottom: 10,
   },
   textInput: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 40,
+    borderRadius: 25,
     paddingHorizontal: 20,
-    paddingVertical: 15,
+    paddingVertical: 12,
     fontSize: 16,
     color: "#000000",
+    borderWidth: 1,
+    borderColor: "#FF3B00",
   },
-  errorText: {
-    color: "#FF3B30",
-    fontSize: 12,
-    marginTop: 6,
-    marginLeft: 20,
+  dropdownInput: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 25,
+    borderWidth: 1,
+    borderColor: "#FF3B00",
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  dropdownPlaceholderText: {
+    color: "#888888",
+    fontSize: 16,
+  },
+  dropdownValueText: {
+    color: "#000000",
+    fontSize: 16,
+    fontWeight: "500",
+  },
+  disclaimerText: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    textAlign: "center",
+    lineHeight: 20,
+    marginVertical: 12,
+    paddingHorizontal: 10,
+    maxWidth: width * 0.85,
+  },
+  disclaimerBold: {
+    fontWeight: "700",
+    color: "#FFFFFF",
   },
   guestSection: {
-    marginTop: 10,
-    marginBottom: 30,
+    alignItems: "center",
+    marginVertical: 16,
   },
-  guestCounterRow: {
+  guestRow: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 30,
+    gap: 30,
     marginTop: 10,
   },
-  guestQtyButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+  guestCircleBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     borderWidth: 1,
     borderColor: "#FFFFFF",
     alignItems: "center",
@@ -595,61 +580,60 @@ const styles = StyleSheet.create({
   },
   guestCountText: {
     color: "#FFFFFF",
-    fontSize: 22,
-    fontWeight: "400",
+    fontSize: 20,
+    fontWeight: "700",
   },
-  confirmTitle: {
-    marginTop: 10,
-    marginBottom: 30,
-  },
-  radioGroup: {
-    gap: 16,
-    marginBottom: 30,
-  },
-  noItemsText: {
-    color: "#888888",
-    fontSize: 14,
-    textAlign: "center",
-  },
-  radioOption: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 14,
-  },
-  radioCircle: {
-    width: 20,
-    height: 20,
-    borderRadius: 11,
-    borderWidth: 1,
-    borderColor: "#FFFFFF",
-  },
-  radioCircleActive: {
-    borderColor: "#FFFFFF",
+  primaryButton: {
     backgroundColor: "#FFFFFF",
-  },
-  radioText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "400",
-    letterSpacing: 0.5,
-  },
-  actionButtonsContainer: {
-    alignItems: "center",
-    gap: 14,
-    marginTop: 10,
-  },
-  primaryPillButton: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 40,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    width: 250,
-    alignItems: "center",
+    paddingVertical: 14,
+    paddingHorizontal: 36,
+    borderRadius: 30,
+    marginTop: 20,
   },
   primaryButtonText: {
     color: "#000000",
+    fontWeight: "500",
     fontSize: 16,
-    fontWeight: "400",
-    letterSpacing: 0.5,
+    letterSpacing: 0.8,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.75)",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
+  },
+  modalContent: {
+    backgroundColor: "#000000",
+    borderRadius: 20,
+    borderWidth: 0.5,
+    borderColor: "#FFFFFF",
+    padding: 20,
+    width: "80%",
+  },
+  modalTitle: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "500",
+    marginBottom: 16,
+    textAlign: "center",
+  },
+  modalOption: {
+    paddingVertical: 12,
+    borderBottomWidth: 0.5,
+    borderBottomColor: "#FFFFFF",
+  },
+  modalOptionSelected: {
+    backgroundColor: "#FF3B001A",
+    borderRadius: 8,
+  },
+  modalOptionText: {
+    color: "#CCCCCC",
+    fontSize: 16,
+    textAlign: "center",
+  },
+  modalOptionTextSelected: {
+    color: "#FF3B00",
+    fontWeight: "700",
   },
 });
