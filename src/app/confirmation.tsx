@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
+import { BlurView } from "expo-blur";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import React, { useMemo } from "react";
 import {
   Dimensions,
   Image,
@@ -13,30 +14,43 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const { width, height } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
+
+let nextBookingSequence = 230110;
 
 export default function ConfirmationScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
 
-  // Extract submitted client and booking data with fallbacks matching your screenshot layout
-  const totalAmount = params?.totalAmount
-    ? String(params.totalAmount)
-    : "3 881.25";
-  const bookingId = params?.bookingId ? String(params.bookingId) : "#NLG-22384";
-  const fullName = params?.name ? String(params.name) : "John Doe";
-  const email = params?.email ? String(params.email) : "Johndoe@example.com";
-  const phone = params?.phone ? String(params.phone) : "0819924545";
-  const bookingDate = params?.date ? String(params.date) : "10 Oct 2026";
-  const guestCount = params?.guestCount ? String(params.guestCount) : "1";
+  // Extract parameters with safe fallbacks matching booking.tsx / fees.tsx input
+  const name = (params?.name as string) || "John Doe";
+  const email = (params?.email as string) || "johndoe@example.com";
+  const phone = (params?.phone as string) || "0819924545";
+  const date = (params?.date as string) || "13-11-2026";
+  const stationPass = (params?.stationPass as string) || "1 HOUR PASS";
+  const guestCount = (params?.guestCount as string) || "3";
+  const totalAmount = (params?.totalAmount as string) || "3881.25";
+  const paymentMethod = "Cash/Card On Arrival";
 
-  const handleClearAndGoToOffers = () => {
-    router.replace("/offers");
-  };
+  // Generate sequential Booking ID (e.g., NXL-230110)
+  const bookingId = useMemo(() => {
+    if (params?.bookingId && String(params.bookingId).startsWith("NXL-")) {
+      return String(params.bookingId);
+    }
+    const currentId = `NXL-${nextBookingSequence}`;
+    nextBookingSequence += 1;
+    return currentId;
+  }, [params?.bookingId]);
 
-  const handleGoToHome = () => {
-    router.replace("/");
-  };
+  // Format currency display
+  const formattedTotal = useMemo(() => {
+    const num = parseFloat(totalAmount);
+    if (isNaN(num)) return `R ${totalAmount}`;
+    return `R ${num.toLocaleString("en-ZA", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
+  }, [totalAmount]);
 
   return (
     <View style={styles.container}>
@@ -44,126 +58,130 @@ export default function ConfirmationScreen() {
 
       <ImageBackground
         source={require("../../assets/images/booking2.png")}
-        style={styles.fullScreenBackground}
+        style={styles.backgroundImage}
         resizeMode="cover"
       >
-        <LinearGradient
-          colors={["rgba(0,0,0,0.5)", "rgba(0,0,0,0.7)", "rgba(0,0,0,0.95)"]}
-          locations={[0, 0.4, 1]}
-          style={styles.gradientOverlay}
-        >
-          <SafeAreaView style={styles.safeArea}>
-            {/* TOP HEADER */}
-            <View style={styles.topHeader}>
-              <Pressable
-                style={styles.backButton}
-                onPress={handleClearAndGoToOffers}
-              >
-                <Ionicons name="arrow-back" size={20} color="#000000" />
-              </Pressable>
+        {/* Semi-transparent dark overlay for background dimming */}
+        <View style={styles.backgroundOverlay} />
+
+        <SafeAreaView style={styles.safeArea}>
+          {/* TOP HEADER with Back Button and Logo Badge */}
+          <View style={styles.topHeader}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => router.push("/booking")}
+            >
+              <Ionicons name="arrow-back" size={20} color="#000000" />
+            </Pressable>
+
+            <View style={styles.logoBadge}>
+              <Image
+                source={require("../../assets/images/logo.png")}
+                style={styles.logoImage}
+                resizeMode="contain"
+              />
+            </View>
+          </View>
+
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+          >
+            {/* HERO TITLE SECTION */}
+            <View style={styles.heroSection}>
+              <Text style={styles.heroTitle}>BOOKING{"\n"}CONFIRMED!</Text>
+              <Text style={styles.heroSubtitle}>
+                You're locked in. Booking request has been sent, our team will
+                contact you soon.
+              </Text>
+              <Text style={styles.boldCallout}>Let the games begin!</Text>
             </View>
 
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.scrollContent}
+            {/* FROSTED GLASS DETAILS CONTAINER */}
+            <BlurView intensity={30} tint="dark" style={styles.glassContainer}>
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>BOOKING ID</Text>
+                <Text style={styles.detailValueBold}>{bookingId}</Text>
+              </View>
+
+              <View style={styles.rowDivider} />
+
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>NAME & SURNAME</Text>
+                <Text style={styles.detailValue}>{name}</Text>
+              </View>
+
+              <View style={styles.rowDivider} />
+
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>EMAIL ADDRESS</Text>
+                <Text style={styles.detailValue}>{email}</Text>
+              </View>
+
+              <View style={styles.rowDivider} />
+
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>PHONE NUMBER</Text>
+                <Text style={styles.detailValue}>{phone}</Text>
+              </View>
+
+              <View style={styles.rowDivider} />
+
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>DATE</Text>
+                <Text style={styles.detailValue}>{date}</Text>
+              </View>
+
+              <View style={styles.rowDivider} />
+
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>STATION PASS</Text>
+                <Text style={styles.detailValue}>
+                  {stationPass.toUpperCase()}
+                </Text>
+              </View>
+
+              <View style={styles.rowDivider} />
+
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>NUMBER OF GUESTS</Text>
+                <Text style={styles.detailValue}>{guestCount}</Text>
+              </View>
+
+              <View style={styles.rowDivider} />
+
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>PAYMENT METHOD</Text>
+                <Text style={styles.detailValue}>{paymentMethod}</Text>
+              </View>
+            </BlurView>
+
+            {/* TOTAL AMOUNT BADGE */}
+            <View style={styles.totalBadge}>
+              <Text style={styles.totalLabel}>Total Amount</Text>
+              <Text style={styles.totalValue}>{formattedTotal}</Text>
+            </View>
+
+            {/* DISCLAIMER FOOTER NOTE */}
+            <Text style={styles.disclaimerText}>
+              Your booking request is being processed by the Next Level team.
+              You will receive a confirmation email within 24 hours detailing
+              your time slot, arena rules, and additional hour pass or upgrade
+              options.
+            </Text>
+
+            {/* DISMISS BUTTON */}
+            <Pressable
+              style={({ pressed }) => [
+                styles.dismissButton,
+                pressed && styles.buttonPressed,
+              ]}
+              onPress={() => router.replace("/(tabs)")}
             >
-              {/* LOGO IMAGE */}
-              <View style={styles.logoContainer}>
-                <Image
-                  source={require("../../assets/images/logo.png")}
-                  style={styles.logoImage}
-                  resizeMode="contain"
-                />
-              </View>
-
-              {/* MAIN TITLE & SUBTITLE */}
-              <View style={styles.titleSection}>
-                <Text style={styles.mainTitle}>
-                  <Text style={styles.boldTitle}>BOOKING </Text>
-                  <Text style={styles.thinTitle}>CONFIRMED!</Text>
-                </Text>
-                <Text style={styles.subtitle}>
-                  <Text style={styles.boldText}>You’re locked in.</Text> Booking
-                  request has been sent, our team will contact you soon.{" "}
-                  <Text style={styles.boldText}>Let the games begin!</Text>
-                </Text>
-              </View>
-
-              {/* BOOKING DETAILS TABLE */}
-              <View style={styles.detailsContainer}>
-                <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>Booking ID</Text>
-                  <Text style={styles.detailValueMuted}>{bookingId}</Text>
-                </View>
-                <View style={styles.rowDivider} />
-
-                <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>Full Name</Text>
-                  <Text style={styles.detailValue}>{fullName}</Text>
-                </View>
-                <View style={styles.rowDivider} />
-
-                <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>Email</Text>
-                  <Text style={styles.detailValue}>{email}</Text>
-                </View>
-                <View style={styles.rowDivider} />
-
-                <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>Phone Number</Text>
-                  <Text style={styles.detailValue}>{phone}</Text>
-                </View>
-                <View style={styles.rowDivider} />
-
-                <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>Date</Text>
-                  <Text style={styles.detailValue}>{bookingDate}</Text>
-                </View>
-                <View style={styles.rowDivider} />
-
-                <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>Number of Guests</Text>
-                  <Text style={styles.detailValue}>{guestCount}</Text>
-                </View>
-                <View style={styles.rowDivider} />
-
-                <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>Payment Method</Text>
-                  <Text style={styles.detailValue}>Pay At Venue</Text>
-                </View>
-                <View style={styles.rowDivider} />
-
-                <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>Status</Text>
-                  <View style={styles.statusPill}>
-                    <Text style={styles.statusText}>Confirmed</Text>
-                  </View>
-                </View>
-              </View>
-
-              {/* TOTAL AMOUNT BADGE */}
-              <View style={styles.totalBadgeContainer}>
-                <View style={styles.totalBadge}>
-                  <Text style={styles.totalLabel}>Total Amount</Text>
-                  <Text style={styles.totalValue}>R {totalAmount}</Text>
-                </View>
-              </View>
-
-              {/* BACK TO HOME BUTTON */}
-              <View style={styles.actionContainer}>
-                <Pressable
-                  style={({ pressed }) => [
-                    styles.homeButton,
-                    pressed && styles.buttonPressed,
-                  ]}
-                  onPress={handleGoToHome}
-                >
-                  <Text style={styles.homeButtonText}>BACK TO HOME</Text>
-                </Pressable>
-              </View>
-            </ScrollView>
-          </SafeAreaView>
-        </LinearGradient>
+              <Text style={styles.dismissButtonText}>DISMISS</Text>
+            </Pressable>
+          </ScrollView>
+        </SafeAreaView>
       </ImageBackground>
     </View>
   );
@@ -174,166 +192,157 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#000000",
   },
-  fullScreenBackground: {
-    width: width,
-    height: height,
+  backgroundImage: {
     flex: 1,
+    width: "100%",
+    height: "100%",
   },
-  gradientOverlay: {
-    flex: 1,
+  backgroundOverlay: {
+    ...StyleSheet.absoluteFill,
+    backgroundColor: "rgba(0, 0, 0, 0.45)",
   },
   safeArea: {
     flex: 1,
   },
-  scrollContent: {
-    paddingHorizontal: 24,
-    paddingBottom: 40,
-  },
-
-  /* Header */
   topHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 20,
-    paddingTop: 40,
-    zIndex: 10,
+    paddingTop: 10,
   },
   backButton: {
-    width: 38,
-    height: 38,
-    borderRadius: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: "#FFFFFF",
     alignItems: "center",
     justifyContent: "center",
   },
-
-  /* Logo */
-  logoContainer: {
+  logoBadge: {
+    width: 44,
+    height: 48,
     alignItems: "center",
-    marginTop: 20,
-    marginBottom: 20,
+    justifyContent: "center",
   },
   logoImage: {
-    width: 200,
-    height: 200,
+    width: "100%",
+    height: "100%",
   },
-
-  /* Title Section */
-  titleSection: {
+  scrollContent: {
+    paddingHorizontal: 20,
+    paddingBottom: 40,
     alignItems: "center",
-    marginBottom: 30,
   },
-  mainTitle: {
+  heroSection: {
+    marginTop: 20,
+    marginBottom: 20,
+    alignItems: "center",
+  },
+  heroTitle: {
     color: "#FFFFFF",
-    fontSize: 32,
+    fontSize: 40,
+    fontWeight: "800",
     letterSpacing: 1,
     textAlign: "center",
+
   },
-  boldTitle: {
-    fontWeight: "800",
-  },
-  thinTitle: {
-    fontWeight: "300",
-  },
-  subtitle: {
+  heroSubtitle: {
     color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: "300",
-    lineHeight: 22,
+    lineHeight: 20,
     textAlign: "center",
     marginTop: 10,
-    paddingHorizontal: 15,
+    maxWidth: width * 0.75,
   },
-  boldText: {
-    fontWeight: "700",
+  boldCallout: {
     color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "700",
+    marginTop: 4,
   },
-
-  /* Details Table */
-  detailsContainer: {
+  glassContainer: {
+    borderRadius: 30,
+    borderWidth: 0.8,
+    borderColor: "#FFFFFF88",
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    width: "100%",
+    overflow: "hidden",
     marginBottom: 30,
   },
   detailRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 15,
+    paddingVertical: 4,
   },
   detailLabel: {
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "700",
+    letterSpacing: 0.5,
   },
   detailValue: {
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "300",
   },
-  detailValueMuted: {
+  detailValueBold: {
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "300",
+    letterSpacing: 0.5,
   },
   rowDivider: {
-    height: 1,
-    backgroundColor: "#FFFFFF4C",
-  },
-  statusPill: {
-    backgroundColor: "#00D2FF",
-    borderRadius: 20,
-    paddingVertical: 4,
-    paddingHorizontal: 16,
-  },
-  statusText: {
-    color: "#000000",
-    fontSize: 16,
-    fontWeight: "400",
-  },
-
-  /* Total Badge */
-  totalBadgeContainer: {
-    alignItems: "center",
-    marginBottom: 30,
+    height: 0.5,
+    backgroundColor: "#FFFFFF33",
+    marginVertical: 6,
   },
   totalBadge: {
-    backgroundColor: "#FF3B1D",
-    borderRadius: 35,
-    paddingVertical: 14,
-    paddingHorizontal: 40,
-    width: 350,
+    backgroundColor: "#FF3B00",
+    borderRadius: 40,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    width: "100%",
     alignItems: "center",
+    marginBottom: 10,
   },
   totalLabel: {
     color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: "300",
-    marginBottom: 2,
+    fontWeight: "500",
   },
   totalValue: {
     color: "#FFFFFF",
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: "700",
     letterSpacing: 0.5,
   },
-
-  /* Home Button */
-  actionContainer: {
-    alignItems: "center",
+  disclaimerText: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    textAlign: "center",
+    lineHeight: 20,
+    marginVertical: 12,
+    paddingHorizontal: 10,
+    maxWidth: width * 0.85,
   },
-  homeButton: {
+  dismissButton: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 40,
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    alignItems: "center",
-    justifyContent: "center",
+    paddingVertical: 14,
+    paddingHorizontal: 36,
+    borderRadius: 30,
+    marginTop: 15,
   },
   buttonPressed: {
     opacity: 0.85,
     transform: [{ scale: 0.98 }],
   },
-  homeButtonText: {
+  dismissButtonText: {
     color: "#000000",
+    fontWeight: "500",
     fontSize: 16,
-    fontWeight: "400",
     letterSpacing: 0.8,
   },
 });
