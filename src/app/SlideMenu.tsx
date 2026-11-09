@@ -133,8 +133,7 @@ export default function SlideMenu() {
 
               <Pressable onPress={() => navigateTo("/about")}>
                 <Text style={styles.navText}>
-                  ABOUT <Text style={styles.thinText}>US</Text>
-                </Text>
+                  ABOUT US</Text>
               </Pressable>
 
               <Pressable onPress={() => navigateTo("/offers")}>
@@ -142,7 +141,7 @@ export default function SlideMenu() {
               </Pressable>
 
               <Pressable onPress={() => navigateTo("/booking")}>
-                <Text style={styles.navText}>BOOKINGS</Text>
+                <Text style={styles.navText}>BOOK NOW</Text>
               </Pressable>
 
               <Pressable onPress={() => navigateTo("/faq")}>
@@ -151,8 +150,7 @@ export default function SlideMenu() {
 
               <Pressable onPress={() => navigateTo("/contact")}>
                 <Text style={styles.navText}>
-                  CONTACT <Text style={styles.thinText}>US</Text>
-                </Text>
+                  CONTACT US</Text>
               </Pressable>
             </View>
 
@@ -212,17 +210,14 @@ const styles = StyleSheet.create({
   },
   navText: {
     color: "#FFFFFF",
-    fontSize: 22,
-    fontWeight: "700",
+    fontSize: 24,
+    fontWeight: "800",
     letterSpacing: 0.5,
-  },
-  thinText: {
-    fontWeight: "300",
   },
   socialsContainer: {
     alignItems: "flex-end",
     paddingRight: 15,
-    gap: 12,
+    gap: 15,
   },
   socialsTitle: {
     color: "#FFFFFF",
