@@ -1,41 +1,33 @@
-import React, { useEffect, useRef } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
+import { LinearGradient } from "expo-linear-gradient";
+import { Stack, useRouter } from "expo-router";
+import React, { useEffect, useRef } from "react";
 import {
+  Animated,
+  Dimensions,
+  Easing,
+  Image,
+  ImageBackground,
+  Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
-  ImageBackground,
-  Image,
-  ScrollView,
-  Dimensions,
-  Animated,
-  Easing,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Stack } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
-import Svg, { Path, Text as SvgText, TextPath } from 'react-native-svg';
-import SlideMenu from './SlideMenu';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
-// Curved SVG Circular Badge Component
+// Animated Circular Image Badge Component
 function CircularTextBadge() {
-  const size = 180;
-  const strokeWidth = 2;
-  const r = (size - strokeWidth) / 2 - 20;
-  const cx = size / 2;
-  const cy = size / 2;
-
-  const pathD = `M ${cx - r},${cy} a ${r},${r} 0 1,1 ${r * 2},0 a ${r},${r} 0 1,1 -${r * 2},0`;
-
-// Continuous Rotation Animation
   const spinValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     Animated.loop(
       Animated.timing(spinValue, {
         toValue: 1,
-        duration: 8000,
+        duration: 9000,
         easing: Easing.linear,
         useNativeDriver: true,
       })
@@ -44,101 +36,143 @@ function CircularTextBadge() {
 
   const spin = spinValue.interpolate({
     inputRange: [0, 1],
-    outputRange: ['0deg', '360deg'],
+    outputRange: ["0deg", "360deg"],
   });
 
-return (
+  return (
     <View style={styles.circularBadgeContainer}>
       <Animated.View style={{ transform: [{ rotate: spin }] }}>
-        <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-          <Path id="circlePath" d={pathD} fill="none" />
-          <SvgText fill="#FFFFFF" fontSize="14" fontWeight="700" letterSpacing="2">
-            <TextPath href="#circlePath" startOffset="0%">
-              MADE FOR EVERYONE.    ✶ BUILT BY GAMERS. ✶
-            </TextPath>
-          </SvgText>
-        </Svg>
+        <Image
+          source={require("../../assets/images/spin.png")}
+          style={styles.badgeImage}
+          resizeMode="contain"
+        />
       </Animated.View>
     </View>
   );
 }
 
 export default function AboutScreen() {
+  const router = useRouter();
+
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
+      <ImageBackground
+        source={require("../../assets/images/about.png")}
+        style={styles.backgroundImage}
+        resizeMode="cover"
       >
-        {/* HERO SECTION */}
-        <ImageBackground
-          source={require('../../assets/images/about.png')}
-          style={styles.heroBackground}
-          resizeMode="cover"
+        <LinearGradient
+          colors={["rgba(0,0,0,0.4)", "rgba(0,0,0,0.75)", "#000000"]}
+          locations={[0, 0.6, 1]}
+          style={styles.gradientOverlay}
         >
-          <LinearGradient
-            colors={['rgba(0,0,0,0.2)', 'rgba(0,0,0,0.5)', '#000000']}
-            locations={[0, 0.7, 1]}
-            style={styles.gradientOverlay}
-          >
-            <SafeAreaView style={styles.safeArea}>
-              {/* HEADER */}
-              <View style={styles.topHeader}>
-                <View style={styles.logoBadge}>
-                  <Image
-                    source={require('../../assets/images/logo.png')}
-                    style={styles.logoImage}
-                    resizeMode="contain"
-                  />
+          <SafeAreaView style={styles.safeArea}>
+            {/* TOP HEADER */}
+            <View style={styles.topHeader}>
+              <Pressable
+                style={({ pressed }) => [
+                  styles.backButton,
+                  pressed && styles.buttonPressed,
+                ]}
+                onPress={() => router.replace("/(tabs)")}
+              >
+                <Ionicons name="arrow-back" size={20} color="#000000" />
+              </Pressable>
+
+              <View style={styles.logoBadge}>
+                <Image
+                  source={require("../../assets/images/logo.png")}
+                  style={styles.logoImage}
+                  resizeMode="contain"
+                />
+              </View>
+            </View>
+
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.scrollContent}
+            >
+              {/* HERO SECTION WITH SPINNING BADGE AND BODY TEXT */}
+              <View style={styles.heroSection}>
+                <View style={styles.titleColumn}>
+                  <Text style={styles.aboutTitle}>ABOUT{"\n"}US</Text>
+
+                  {/* ROTATING SPIN IMAGE BADGE */}
+                  <CircularTextBadge />
                 </View>
-                <SlideMenu />
+
+                <View style={styles.descriptionColumn}>
+                  <Text style={styles.aboutDescription}>
+                    Founded in 2023 in the heart of Johannesburg,{" "}
+                    <Text style={styles.boldText}>
+                      Next Level Gaming & Esports Arena
+                    </Text>{" "}
+                    was built by Jason Naidoo, an avid gamer who saw a major gap
+                    in the local gaming scene. While South Africa's passion for
+                    Esports and gaming was rapidly growing, access to
+                    high-performance equipment, specialized arena setups, and
+                    organized competitive events remained limited. Driven to
+                    solve this, Jason set out to build a modern venue that
+                    bridges the gap, offering a space where players of all skill
+                    levels can access top-tier gear, join competitive
+                    tournaments, and share their passion with a vibrant
+                    community.
+                  </Text>
+                </View>
               </View>
 
-              {/* CURVED TEXT BADGE */}
-              <CircularTextBadge />
+              {/* HORIZONTALLY SCROLLING CARDS SECTION (OUR MISSION & OUR VISION) */}
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.cardsScrollContent}
+                snapToInterval={width * 0.54 + 15}
+                decelerationRate="fast"
+              >
+                {/* OUR MISSION CARD */}
+                <BlurView intensity={30} tint="dark" style={styles.glassCard}>
+                  <Text style={styles.cardTitle}>OUR{"\n"}MISSION</Text>
+                  <Text style={styles.cardDescription}>
+                    We are dedicated to driving the expansion of South Africa's
+                    Esports and gaming ecosystem. By combining modern hardware,
+                    inclusive community spaces, and competitive events, Next
+                    Level provides an accessible platform where casual players
+                    can socialise and aspiring pro-gamers can hone their skills.
+                  </Text>
+                </BlurView>
 
-              {/* ABOUT US BODY */}
-              <View style={styles.aboutUsSection}>
-                <Text style={styles.aboutTitle}>
-                  ABOUT <Text style={styles.thinText}>US</Text>
-                </Text>
+                {/* OUR VISION CARD */}
+                <BlurView intensity={30} tint="dark" style={styles.glassCard}>
+                  <Text style={styles.cardTitle}>OUR{"\n"}VISION</Text>
+                  <Text style={styles.cardDescription}>
+                    To be Africa's premier gaming and Esports destination,
+                    cultivating an inclusive community where every player, from
+                    casual gamer to aspiring pro, can unlock their full
+                    potential. Empowering gamers to play, connect, and compete
+                    at the next level in a vibrant, inclusive space.
+                  </Text>
+                </BlurView>
+              </ScrollView>
 
-                <Text style={styles.aboutDescription}>
-                  Founded in 2023 in the heart of Johannesburg,{' '}
-                  <Text style={styles.boldText}>
-                    Next Level Gaming & Esports Arena
-                  </Text>{' '}
-                  was built by Jason Naidoo, an avid gamer who saw a major gap in the
-                  local gaming scene. While South Africa's passion for Esports and
-                  gaming was rapidly growing, access to high-performance equipment,
-                  specialized arena setups, and organized competitive events remained
-                  limited. Driven to solve this, Jason set out to build a modern venue
-                  that bridges the gap, offering a space where players of all skill
-                  levels can access top-tier gear, join competitive tournaments, and
-                  share their passion with a vibrant community.
-                </Text>
+              {/* START GAMING BUTTON */}
+              <View style={styles.actionContainer}>
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.startGamingButton,
+                    pressed && styles.buttonPressed,
+                  ]}
+                  onPress={() => router.push("/offers")}
+                >
+                  <Text style={styles.startGamingText}>START GAMING</Text>
+                </Pressable>
               </View>
-            </SafeAreaView>
-          </LinearGradient>
-        </ImageBackground>
-
-        {/* MISSION SECTION */}
-        <View style={styles.missionSection}>
-          <Text style={styles.missionTitle}>
-            OUR <Text style={styles.thinText}>MISSION</Text>
-          </Text>
-
-          <Text style={styles.missionDescription}>
-            We are dedicated to driving the expansion of South Africa's Esports and
-            gaming ecosystem. By combining modern hardware, inclusive community
-            spaces, and competitive events, Next Level provides an accessible
-            platform where casual players can socialise and aspiring pro-gamers can
-            hone their skills.
-          </Text>
-        </View>
-      </ScrollView>
+            </ScrollView>
+          </SafeAreaView>
+        </LinearGradient>
+      </ImageBackground>
     </View>
   );
 }
@@ -146,95 +180,138 @@ export default function AboutScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: "#000000",
   },
-  scrollContent: {
-    flexGrow: 1,
-    justifyContent: 'space-between',
-  },
-  heroBackground: {
-    width: '100%',
-    minHeight: 950,
+  backgroundImage: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
   },
   gradientOverlay: {
     flex: 1,
   },
   safeArea: {
     flex: 1,
-    justifyContent: 'space-between',
   },
   topHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 20,
     paddingTop: 10,
+    zIndex: 10,
+  },
+  backButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "#FFFFFF",
+    alignItems: "center",
+    justifyContent: "center",
   },
   logoBadge: {
     width: 44,
     height: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   logoImage: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
-  circularBadgeContainer: {
-    position: 'absolute',
-    top: 320,
-    left: width * 0.36,
-    width: 180,
-    height: 180,
-    zIndex: 5,
-    marginVertical: -10,
+  scrollContent: {
+    paddingBottom: 40,
   },
-  aboutUsSection: {
-    paddingHorizontal: 20,
-    alignItems: 'flex-end',
-    marginBottom: 0,
+  heroSection: {
+    flexDirection: "row",
+    paddingHorizontal: 30,
+    marginTop: 20,
+    marginBottom: 30,
+    justifyContent: "space-between",
+  },
+  titleColumn: {
+    width: "35%",
+    alignItems: "flex-start",
   },
   aboutTitle: {
-    color: '#FFFFFF',
-    fontSize: 36,
-    fontWeight: '700',
+    color: "#FFFFFF",
+    fontSize: 40,
+    fontWeight: "800",
     letterSpacing: 1,
-    marginBottom: 10,
-    textAlign: 'right',
+    marginBottom: 20,
+  },
+  circularBadgeContainer: {
+    width: 140,
+    height: 140,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  badgeImage: {
+    width: 120,
+    height: 120,
+  },
+  descriptionColumn: {
+    width: "55%",
   },
   aboutDescription: {
-    color: '#FFFFFF',
-    fontSize: 14,
+    color: "#FFFFFF",
+    fontSize: 16,
     lineHeight: 20,
-    textAlign: 'right',
-    maxWidth: width * 0.8,
-  },
-  thinText: {
-    fontWeight: '300',
+    fontWeight: "400",
+    textAlign: "left",
   },
   boldText: {
-    fontWeight: '700',
-    color: '#FFFFFF',
+    fontWeight: "700",
+    color: "#FFFFFF",
   },
-  missionSection: {
-    backgroundColor: '#000000',
-    paddingHorizontal: 20,
-    paddingTop: 10,
-    paddingBottom: 50,
+  cardsScrollContent: {
+    paddingHorizontal: 30,
+    gap: 15,
+    paddingBottom: 30,
   },
-  missionTitle: {
-    color: '#FFFFFF',
-    fontSize: 36,
-    fontWeight: '700',
+  glassCard: {
+    width: width * 0.54,
+    height: 280,
+    borderRadius: 30,
+    borderWidth: 0.8,
+    borderColor: "#FFFFFF",
+    padding: 20,
+    overflow: "hidden",
+    justifyContent: "flex-start",
+  },
+  cardTitle: {
+    color: "#FFFFFF",
+    fontSize: 24,
+    fontWeight: "700",
     letterSpacing: 1,
-    marginBottom: 10,
-    textAlign: 'left',
+    textAlign: "center",
+    lineHeight: 26,
+    marginBottom: 15,
   },
-  missionDescription: {
-    color: '#FFFFFF',
+  cardDescription: {
+    color: "#FFFFFF",
     fontSize: 14,
     lineHeight: 20,
-    textAlign: 'left',
-    maxWidth: width * 0.8,
+    fontWeight: "300",
+    textAlign: "center",
+  },
+  actionContainer: {
+    alignItems: "center",
+  },
+  startGamingButton: {
+    backgroundColor: "#FFFFFF",
+    paddingVertical: 14,
+    paddingHorizontal: 36,
+    borderRadius: 30,
+  },
+  buttonPressed: {
+    opacity: 0.85,
+    transform: [{ scale: 0.98 }],
+  },
+  startGamingText: {
+    color: "#000000",
+    fontWeight: "500",
+    fontSize: 16,
+    letterSpacing: 0.8,
   },
 });
