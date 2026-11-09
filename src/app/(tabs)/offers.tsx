@@ -3,6 +3,7 @@ import { BlurView } from "expo-blur";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import {
+  Dimensions,
   Image,
   ImageBackground,
   Pressable,
@@ -13,6 +14,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SlideMenu from "../SlideMenu";
+
+const { width } = Dimensions.get("window");
 
 interface OfferCardProps {
   title: string;
@@ -97,6 +100,9 @@ export default function OffersScreen() {
         style={styles.backgroundImage}
         resizeMode="cover"
       >
+        {/* Semi-transparent dark overlay for background dimming */}
+        <View style={styles.backgroundOverlay} />
+
         <SafeAreaView style={styles.safeArea}>
           {/* TOP HEADER */}
           <View style={styles.topHeader}>
@@ -193,6 +199,10 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
+  backgroundOverlay: {
+    ...StyleSheet.absoluteFill,
+    backgroundColor: "rgba(0, 0, 0, 0.45)",
+  },
   safeArea: {
     flex: 1,
   },
@@ -224,10 +234,11 @@ const styles = StyleSheet.create({
   mainTitle: {
     color: "#FFFFFF",
     fontSize: 40,
-    fontWeight: "700",
+    fontWeight: "800",
+    lineHeight: 38,
     textAlign: "center",
     letterSpacing: 0.5,
-    lineHeight: 38,
+    marginBottom: 10,
   },
   accentText: {
     color: "#FFFFFF",
@@ -235,21 +246,20 @@ const styles = StyleSheet.create({
   subtitle: {
     color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: "300",
     lineHeight: 20,
+    fontWeight: "400",
     textAlign: "center",
-    maxWidth: "80%",
     marginTop: 10,
-    marginHorizontal: 10,
+    maxWidth: width * 0.75,
   },
   boldText: {
     color: "#FFFFFF",
-    fontWeight: "700",
+    fontWeight: "800",
   },
   toggleContainer: {
     flexDirection: "row",
     borderRadius: 40,
-    borderWidth: 0.5,
+    borderWidth: 0.8,
     borderColor: "#FFFFFF",
     padding: 3,
     marginTop: 20,
@@ -269,8 +279,8 @@ const styles = StyleSheet.create({
   },
   toggleText: {
     color: "#FFFFFF",
-    fontSize: 14,
-    fontWeight: "500",
+    fontSize: 16,
+    fontWeight: "700",
     letterSpacing: 0.5,
   },
   cardsList: {
@@ -279,7 +289,7 @@ const styles = StyleSheet.create({
   },
   cardContainer: {
     borderRadius: 30,
-    borderWidth: 0.5,
+    borderWidth: 0.8,
     borderColor: "#FFFFFF",
     paddingHorizontal: 20,
     paddingVertical: 20,
@@ -304,7 +314,7 @@ const styles = StyleSheet.create({
   cardDescription: {
     color: "#FFFFFF",
     fontSize: 14,
-    fontWeight: "300",
+    fontWeight: "400",
     lineHeight: 20,
     marginBottom: 10,
   },
