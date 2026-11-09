@@ -1,16 +1,17 @@
-import React from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import React from "react";
 import {
+  Image,
+  ImageBackground,
+  Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
-  ImageBackground,
-  ScrollView,
-  Pressable,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function VirtualRealityScreen() {
   const router = useRouter();
@@ -20,18 +21,17 @@ export default function VirtualRealityScreen() {
     <View style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
 
-      {/* FULL-SCREEN BACKGROUND IMAGE */}
       <ImageBackground
-        source={require('../../assets/images/virtual.png')}
+        source={require("../../assets/images/virtual.png")}
         style={styles.fullScreenBackground}
         resizeMode="cover"
       >
         <LinearGradient
           colors={[
-            'rgba(0,0,0,0.6)',
-            'rgba(0,0,0,0.2)',
-            'rgba(0,0,0,0.4)',
-            'rgba(0,0,0,0.85)',
+            "rgba(0,0,0,0.6)",
+            "rgba(0,0,0,0.2)",
+            "rgba(0,0,0,0.4)",
+            "rgba(0,0,0,0.85)",
           ]}
           locations={[0, 0.25, 0.65, 1]}
           style={styles.gradientOverlay}
@@ -41,9 +41,23 @@ export default function VirtualRealityScreen() {
             <View style={styles.topHeader}>
               <Pressable
                 style={styles.backButton}
-                onPress={() => router.push("/offers")}>
+                onPress={() =>
+                  router.push({
+                    pathname: "/offers",
+                    params: { existingItems: params?.existingItems },
+                  })
+                }
+              >
                 <Ionicons name="arrow-back" size={20} color="#000000" />
               </Pressable>
+
+              <View style={styles.logoBadge}>
+                <Image
+                  source={require("../../assets/images/logo.png")}
+                  style={styles.logoImage}
+                  resizeMode="contain"
+                />
+              </View>
             </View>
 
             <ScrollView
@@ -52,20 +66,17 @@ export default function VirtualRealityScreen() {
             >
               {/* TOP: TITLE & PRICE */}
               <View style={styles.headerTitleSection}>
-                <Text style={styles.mainTitle}>
-                  VIRTUAL <Text style={styles.thinTitle}>REALITY</Text>
-                </Text>
+                <Text style={styles.mainTitle}>VIRTUAL{"\n"}REALITY</Text>
                 <Text style={styles.priceTag}>R 750</Text>
               </View>
 
-              {/* BOTTOM SECTION: DESCRIPTION + INCLUDES + CTA */}
+              {/* BOTTOM SECTION */}
               <View style={styles.bottomSection}>
-                {/* DESCRIPTION SECTION */}
                 <View style={styles.descriptionContainer}>
                   <Text style={styles.cardBodyText}>
                     Step beyond reality and immerse yourself in high-definition
-                    digital worlds with our{' '}
-                    <Text style={styles.boldText}>Virtual Reality Experience!</Text>{' '}
+                    digital worlds with our{" "}
+                    <Text style={styles.boldText}>Virtual Reality Experience!</Text>{" "}
                     Powered by cutting-edge VR technology and full room-scale
                     tracking, this session puts you directly in the center of the
                     action. Explore expansive virtual landscapes, fight off wave
@@ -76,7 +87,6 @@ export default function VirtualRealityScreen() {
                     interactive journey like no other.
                   </Text>
 
-                  {/* INCLUDES TAGS */}
                   <View style={styles.includesSection}>
                     <Text style={styles.includesText}>
                       <Text style={styles.includesHeading}>INCLUDES</Text> ✦ VR
@@ -93,16 +103,13 @@ export default function VirtualRealityScreen() {
                       styles.bookButton,
                       pressed && styles.bookButtonPressed,
                     ]}
-                    onPress={() => router.push({
-                      pathname: '/booking',
-                      params: { 
-                        title: 'VIRTUAL REALITY', 
-                        price: '750',
-                        existingItems: params?.existingItems 
-                      }
-                    })}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/booking",
+                      })
+                    }
                   >
-                    <Text style={styles.bookButtonText}>BOOK NOW!</Text>
+                    <Text style={styles.bookButtonText}>BOOK NOW</Text>
                   </Pressable>
                 </View>
               </View>
@@ -117,7 +124,7 @@ export default function VirtualRealityScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: "#000000",
   },
   fullScreenBackground: {
     flex: 1,
@@ -132,105 +139,102 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 20,
     flexGrow: 1,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
   },
-
-  /* Header */
   topHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 20,
-    paddingTop: 40,
+    paddingTop: 10,
     zIndex: 10,
   },
   backButton: {
-    width: 38,
-    height: 38,
-    borderRadius: 20,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "#FFFFFF",
+    alignItems: "center",
+    justifyContent: "center",
   },
-
-  /* Title & Price */
+  logoBadge: {
+    width: 44,
+    height: 48,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  logoImage: {
+    width: "100%",
+    height: "100%",
+  },
   headerTitleSection: {
-    marginTop: 20,
+    marginTop: 30,
     marginBottom: 20,
+    alignItems: "center",
   },
   mainTitle: {
-    color: '#FFFFFF',
-    fontSize: 32,
-    fontWeight: '800',
-    textAlign: 'right',
+    color: "#FFFFFF",
+    fontSize: 40,
+    fontWeight: "800",
+    lineHeight: 38,
+    textAlign: "center",
     letterSpacing: 1,
   },
-  thinTitle: {
-    fontWeight: '300',
-  },
   priceTag: {
-    color: '#0734EA',
-    fontSize: 32,
-    fontWeight: '800',
-    textAlign: 'right',
-    marginTop: 6,
+    color: "#A855F7",
+    fontSize: 40,
+    fontWeight: "700",
+    textAlign: "center",
+    marginTop: 10,
   },
-
-  /* Bottom Section Wrapper */
   bottomSection: {
-    marginTop: 'auto',
+    marginTop: "auto",
   },
-
-  /* Description Styles */
   descriptionContainer: {
     marginBottom: 20,
   },
   cardBodyText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 16,
     lineHeight: 22,
-    textAlign: 'right',
+    textAlign: "center",
   },
   boldText: {
-    fontWeight: '800',
-    color: '#FFFFFF',
+    fontWeight: "700",
+    color: "#FFFFFF",
   },
   includesSection: {
-    marginTop: 18,
+    marginTop: 20,
   },
   includesText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 16,
     lineHeight: 22,
-    textAlign: 'right',
+    textAlign: "center",
   },
   includesHeading: {
-    fontWeight: '800',
-    color: '#FFFFFF',
+    fontWeight: "700",
+    color: "#FFFFFF",
   },
-
-  /* CTA Button */
   actionContainer: {
-    alignItems: 'flex-end',
-    marginTop: 10,
+    alignItems: "center",
+    marginTop: 20,
     marginBottom: 10,
   },
   bookButton: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 25,
+    backgroundColor: "#FFFFFF",
     paddingVertical: 14,
-    paddingHorizontal: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingHorizontal: 36,
+    borderRadius: 30,
   },
   bookButtonPressed: {
     opacity: 0.85,
     transform: [{ scale: 0.97 }],
   },
   bookButtonText: {
-    color: '#000000',
+    color: "#000000",
+    fontWeight: "500",
     fontSize: 16,
-    fontWeight: '400',
-    letterSpacing: 0.5,
+    letterSpacing: 0.8,
   },
 });
