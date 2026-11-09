@@ -1,15 +1,17 @@
 import { Ionicons } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { Stack, useRouter } from "expo-router";
 import { useState } from "react";
 import {
-    Dimensions,
-    ImageBackground,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  Dimensions,
+  Image,
+  ImageBackground,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -66,19 +68,30 @@ export default function FaqScreen() {
         resizeMode="cover"
       >
         <LinearGradient
-          colors={["rgba(0,0,0,0.5)", "rgba(0,0,0,0.75)", "rgba(0,0,0,0.95)"]}
-          locations={[0, 0.4, 1]}
+          colors={["rgba(0,0,0,0.4)", "rgba(0,0,0,0.75)", "#000000"]}
+          locations={[0, 0.6, 1]}
           style={styles.gradientOverlay}
         >
           <SafeAreaView style={styles.safeArea}>
             {/* TOP HEADER */}
             <View style={styles.topHeader}>
               <Pressable
-                style={styles.backButton}
-                onPress={() => router.back()}
+                style={({ pressed }) => [
+                  styles.backButton,
+                  pressed && styles.buttonPressed,
+                ]}
+                onPress={() => router.replace("/(tabs)")}
               >
                 <Ionicons name="arrow-back" size={20} color="#000000" />
               </Pressable>
+
+              <View style={styles.logoBadge}>
+                <Image
+                  source={require("../../assets/images/logo.png")}
+                  style={styles.logoImage}
+                  resizeMode="contain"
+                />
+              </View>
             </View>
 
             <ScrollView
@@ -87,16 +100,20 @@ export default function FaqScreen() {
             >
               {/* HEADER TITLE */}
               <View style={styles.headerTitleSection}>
-                <Text style={styles.mainTitle}>GOT QUESTIONS?</Text>
-                <Text style={styles.subTitle}>WE’VE GOT ANSWERS.</Text>
+                <Text style={styles.mainTitle}>GOT{"\n"}QUESTIONS?</Text>
               </View>
 
-              {/* ACCORDION LIST */}
+              {/* ACCORDION LIST (GLASSMORPHIC) */}
               <View style={styles.accordionContainer}>
                 {FAQ_DATA.map((item, index) => {
                   const isExpanded = expandedIndex === index;
                   return (
-                    <View key={index} style={styles.accordionItem}>
+                    <BlurView
+                      key={index}
+                      intensity={30}
+                      tint="dark"
+                      style={styles.accordionItem}
+                    >
                       <Pressable
                         style={styles.accordionHeader}
                         onPress={() => toggleAccordion(index)}
@@ -105,8 +122,8 @@ export default function FaqScreen() {
                         <View style={styles.iconContainer}>
                           <Ionicons
                             name={isExpanded ? "remove" : "add"}
-                            size={18}
-                            color="#FF3B1D"
+                            size={20}
+                            color="#FF3B00"
                           />
                         </View>
                       </Pressable>
@@ -116,9 +133,22 @@ export default function FaqScreen() {
                           <Text style={styles.answerText}>{item.answer}</Text>
                         </View>
                       )}
-                    </View>
+                    </BlurView>
                   );
                 })}
+              </View>
+
+              {/* START GAMING BUTTON */}
+              <View style={styles.actionContainer}>
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.startGamingButton,
+                    pressed && styles.buttonPressed,
+                  ]}
+                  onPress={() => router.push("/offers")}
+                >
+                  <Text style={styles.startGamingText}>START GAMING</Text>
+                </Pressable>
               </View>
             </ScrollView>
           </SafeAreaView>
@@ -145,52 +175,59 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: 30,
+    paddingHorizontal: 20,
     paddingBottom: 40,
   },
 
   /* Header */
   topHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 20,
-    paddingTop: 40,
+    paddingTop: 10,
     zIndex: 10,
   },
   backButton: {
-    width: 38,
-    height: 38,
-    borderRadius: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: "#FFFFFF",
     alignItems: "center",
     justifyContent: "center",
   },
+  logoBadge: {
+    width: 44,
+    height: 48,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  logoImage: {
+    width: "100%",
+    height: "100%",
+  },
   headerTitleSection: {
-    marginTop: 40,
-    marginBottom: 30,
+    marginTop: 20,
+    marginBottom: 20,
     alignItems: "center",
   },
   mainTitle: {
     color: "#FFFFFF",
-    fontSize: 32,
+    fontSize: 40,
     fontWeight: "800",
     letterSpacing: 1,
+    marginBottom: 20,
     textAlign: "center",
-  },
-  subTitle: {
-    color: "#FFFFFF",
-    fontSize: 32,
-    fontWeight: "300",
-    letterSpacing: 1,
-    textAlign: "center",
-    marginTop: 4,
   },
   accordionContainer: {
-    gap: 20,
+    gap: 15,
   },
   accordionItem: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 40,
+    borderRadius: 30,
+    borderWidth: 0.8,
+    borderColor: "#FFFFFF",
     overflow: "hidden",
-    paddingVertical: 20,
+    paddingVertical: 16,
     paddingHorizontal: 20,
   },
   accordionHeader: {
@@ -199,29 +236,48 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   questionText: {
-    color: "#000000",
+    color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "700",
     flex: 1,
     paddingRight: 10,
   },
   iconContainer: {
-    width: 30,
-    height: 30,
-    borderRadius: 20,
+    width: 24,
+    height: 24,
     alignItems: "center",
     justifyContent: "center",
   },
   accordionBody: {
     marginTop: 12,
     borderTopWidth: 1,
-    borderTopColor: "#FFFFFF",
-    paddingTop: 10,
+    borderTopColor: "rgba(255, 255, 255, 0.2)",
+    paddingTop: 12,
   },
   answerText: {
-    color: "#000000",
+    color: "#FFFFFF",
     fontSize: 16,
-    lineHeight: 22,
-    fontWeight: "400",
+    lineHeight: 20,
+    fontWeight: "300",
+  },
+  actionContainer: {
+    alignItems: "center",
+    marginTop: 40,
+  },
+  startGamingButton: {
+    backgroundColor: "#FFFFFF",
+    paddingVertical: 14,
+    paddingHorizontal: 36,
+    borderRadius: 30,
+  },
+  buttonPressed: {
+    opacity: 0.85,
+    transform: [{ scale: 0.98 }],
+  },
+  startGamingText: {
+    color: "#000000",
+    fontWeight: "700",
+    fontSize: 14,
+    letterSpacing: 0.8,
   },
 });
