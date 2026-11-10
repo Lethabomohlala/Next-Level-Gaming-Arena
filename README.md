@@ -1,6 +1,6 @@
 ![Banner for NextLevel](./assets/images/banner.png)
 
-# Welcome to the **NEXT LEVEL GAMING ARENA** App
+# Welcome to the NEXT LEVEL Gaming Arena App
 
 [✦ YOUTUBE VIDEO LINK ✦](https://youtu.be/Z1DuGEvNvk8?si=75ISm0o_flsh9m6-)
 
@@ -10,9 +10,9 @@ REMEMBER TO INCREASE THE VIDEO QUALITY ON YOUTUBE TO 1080DP
 
 | Team Member           | Branch Name        | Primary Contributions & Responsibilities                                                                                                              |
 | :-------------------- | :----------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Lethabo Mohlala**   | `lethabos-screens` | Developed `Home.tsx`, `About.tsx`, navigation setup, overall project UI architecture, and Expo mobile testing configurations.                         |
-| **Keabetswe Mathole** | `kea-screens`      | Implemented `Offers.tsx` catalogue, package detail screens (`Ultimate.tsx`, `Esports.tsx`, `Virtual.tsx`, `Escape.tsx`).                              |
-| **Kevin Siaga**       | `kevins-screens`   | Designed `Booking.tsx` selection engine, `Fees.tsx` price and VAT calculation logic, `Confirmation.tsx`, and `Contact.tsx` embedded maps integration. |
+| **Lethabo Mohlala**   | `lethabos-screens` | Developed `Home.tsx`, `About.tsx`, `Offers.tsx`, navigation setup, overall project UI architecture, price and VAT calculation logic and Expo mobile testing configurations.                         |
+| **Keabetswe Mathole** | `kea-screens`      | Implemented package detail screens (`Ultimate.tsx`, `Esports.tsx`, `Virtual.tsx`, `Escape.tsx`).                              |
+| **Kevin Siaga**       | `kevins-screens`   | Designed `Booking.tsx` , `Fees.tsx` , `Confirmation.tsx`, and `Contact.tsx` embedded maps integration. |
 
 ## 2. Project Overview
 
@@ -115,7 +115,7 @@ The Next Level Gaming Arena mobile application connects gamers directly with our
 
 **1. Clone the Repository:**
 
-- git clone [https://github.com/Lethabomohlala/Next-Level-Gaming-Arena.git](https://github.com/Lethabomohlala/Next-Level-Gaming-Arena.git)
+- git clone [https://github.com/Lethabomohlala/Next-Level-Gaming-Arena](https://github.com/Lethabomohlala/Next-Level-Gaming-Arena)
 
 **2. Open the Project Directory:**
 
@@ -182,24 +182,44 @@ This project and its source code are intended for educational and project purpos
 
 ## 11. Image References
 
-Darmel, A. _[s.a.]_. _A boy and girl playing games._ [Online image]. Pexels. Available at: https://www.pexels.com/photo/a-boy-and-girl-playing-games-7862384/ [Accessed: 06 October 2026].
+**Home**
 
-Darmel, A. _[s.a.]_. _A person holding a wireless game controller._ [Online image]. Pexels. Available at: https://www.pexels.com/photo/a-person-holding-a-wireless-game-controller-7862390/ [Accessed: 06 October 2026].
+Pexels. 2021. _Men sitting on the couch while playing video games._ [Online image]. Available at: https://www.pexels.com/photo/men-sitting-on-the-couch-while-playing-video-games-7862272/ [Accessed 08 November 2026].
 
-Darmel, A. _[s.a.]_. _Group of friends playing a video game._ [Online image]. Pexels. Available at: https://www.pexels.com/photo/group-of-friends-playing-a-video-game-7862405/ [Accessed: 06 October 2026].
+**About**
 
-Darmel, A. _[s.a.]_. _Men sitting on the couch while playing video games._ [Online image]. Pexels. Available at: https://www.pexels.com/photo/men-sitting-on-the-couch-while-playing-video-games-7862272/ [Accessed: 06 October 2026].
+Unsplash. 2021. _Illuminated arena sign with gamepad icon on building at night._ [Online image]. Available at: https://unsplash.com/photos/illuminated-arena-sign-with-gamepad-icon-on-building-at-night-1kanQ80gVl [Accessed 08 November 2026].
 
-Krukau, Y. _[s.a.]_. _A team playing online games._ [Online image]. Pexels. Available at: https://www.pexels.com/photo/a-team-playing-online-games-9072248/ [Accessed: 06 October 2026].
+**Offers**
 
-Krukau, Y. _[s.a.]_. _Men in a computer shop._ [Online image]. Pexels. Available at: https://www.pexels.com/photo/men-in-a-computer-shop-9072326/ [Accessed: 06 October 2026].
+Unsplash. 2021. _Man in red shirt wearing black headphones._ [Online image]. Available at: https://unsplash.com/photos/man-in-red-shirt-wearing-black-headphones-u2qP5qCLgQ4 [Accessed 08 November 2026].
 
-Krukau, Y. _[s.a.]_. _Men playing computer games._ [Online image]. Pexels. Available at: https://www.pexels.com/photo/men-playing-computer-games-9072319/ [Accessed: 06 October 2026].
+**Booking**
 
-Krukau, Y. _[s.a.]_. _Men pointing on computer screen._ [Online image]. Pexels. Available at: https://www.pexels.com/photo/men-pointing-on-computer-screen-9072251/ [Accessed: 06 October 2026].
+Unsplash. 2021. _A group of people standing around a computer._ [Online image]. Available at: https://unsplash.com/photos/a-group-of-people-standing-around-a-computer-8hB7aYp823o [Accessed 08 November 2026].
 
-Krukau, Y. _[s.a.]_. _People using computers._ [Online image]. Pexels. Available at: https://www.pexels.com/photo/people-using-computers-9072392/ [Accessed: 06 October 2026].
+**Fees**
 
-Krukau, Y. _[s.a.]_. _Young men engaged in e-sports playing in a tournament._ [Online image]. Pexels. Available at: https://www.pexels.com/photo/young-men-engaged-in-e-sports-playing-in-a-tournament-9072328/ [Accessed: 06 October 2026].
+Pexels. 2021. _A person holding a wireless game controller._ [Online image]. Available at: https://www.pexels.com/photo/a-person-holding-a-wireless-game-controller-7862390/ [Accessed 08 November 2026].
 
-SHVETS Production _[s.a.]_. _Portrait of a man using a virtual reality headset._ [Online image]. Pexels. Available at: https://www.pexels.com/photo/portrait-of-a-man-using-a-virtual-reality-headset-7562029/ [Accessed: 06 October 2026].
+**Confirmation**
+
+Unsplash. 2020. _Black sony ps4 wireless controller._ [Online image]. Available at: https://unsplash.com/photos/black-sony-ps4-wireless-controller--yePUylDPJQ [Accessed 08 November 2026].
+
+**Contact**
+
+Unsplash. 2022. _A person standing in front of a tv in a dark room._ [Online image]. Available at: https://unsplash.com/photos/a-person-standing-in-front-of-a-tv-in-a-dark-room-W4K6pHZD_s8 [Accessed 08 November 2026].
+
+**FAQ**
+
+Unsplash. 2022. _A close up of a computer motherboard in a dark room._ [Online image]. Available at: https://unsplash.com/photos/a-close-up-of-a-computer-motherboard-in-a-dark-room-Q-xGz9NOVOE [Accessed 08 November 2026].
+
+**Individual**
+
+SHVETS Production. 2021. _Men playing computer games._ [Online image]. Available at: https://www.pexels.com/photo/men-playing-computer-games-9072319/ [Accessed 08 November 2026].
+
+SHVETS Production. 2021. _Men pointing on computer screen._ [Online image]. Available at: https://www.pexels.com/photo/men-pointing-on-computer-screen-9072251/ [Accessed 08 November 2026].
+
+SHVETS Production. 2021. _Portrait of a man using a virtual reality headset._ [Online image]. Available at: https://www.pexels.com/photo/portrait-of-a-man-using-a-virtual-reality-headset-7562029/ [Accessed 08 November 2026].
+
+SHVETS Production. 2021. _Group of friends playing a video game._ [Online image]. Available at: https://www.pexels.com/photo/group-of-friends-playing-a-video-game-7862405/ [Accessed 08 November 2026].
