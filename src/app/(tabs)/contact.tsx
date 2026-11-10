@@ -37,7 +37,13 @@ export default function ContactScreen() {
   };
 
   const handleSendMessage = () => {
-    if (!name.trim() || !email.trim() || !phone.trim() || !message.trim()) {
+    const trimmedName = name.trim();
+    const nameParts = trimmedName.split(/\s+/);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const cleanedPhone = phone.replace(/\D/g, "");
+
+    // 1. Check required fields
+    if (!trimmedName || !email.trim() || !phone.trim() || !message.trim()) {
       Alert.alert(
         "Missing Information",
         "Please fill in all required fields before sending your message.",
@@ -45,9 +51,36 @@ export default function ContactScreen() {
       return;
     }
 
+    // 2. Name validation: Check for Name & Surname (at least two words)
+    if (nameParts.length < 2) {
+      Alert.alert(
+        "Invalid Name",
+        "Please enter both your First Name and Surname.",
+      );
+      return;
+    }
+
+    // 3. Email format validation
+    if (!emailRegex.test(email.trim())) {
+      Alert.alert(
+        "Invalid Email",
+        "Please enter a valid email address format (e.g., user@example.com).",
+      );
+      return;
+    }
+
+    // 4. Phone number validation: Ensure exactly 10 digits
+    if (cleanedPhone.length !== 10) {
+      Alert.alert(
+        "Invalid Phone Number",
+        "Please enter a valid 10-digit phone number.",
+      );
+      return;
+    }
+
     Alert.alert(
       "Message Sent!",
-      `Thank you, ${name.trim()}! The Next Level team at info@nextlevelarena.co.za will get back to you regarding your enquiry within 24 hours.`,
+      `Thank you, ${trimmedName}! The Next Level team at info@nextlevelarena.co.za will get back to you regarding your enquiry within 24 hours.`,
       [
         {
           text: "OK",

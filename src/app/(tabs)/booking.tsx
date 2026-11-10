@@ -80,32 +80,41 @@ export default function BookingScreen() {
       }),
     );
 
-// Validation checks for required fields
+    // 1. Check if at least one package or experience is selected
     if (selectedItems.length === 0) {
-      alert("Please complete all required fields and select at least one package or experience to continue.");
+      alert("Please select at least one package or experience to continue.");
       return;
     }
 
-    if (!name.trim()) {
-      alert("Please enter your Name & Surname.");
+    // 2. Name validation: Check for Name & Surname (at least two words)
+    const trimmedName = name.trim();
+    const nameParts = trimmedName.split(/\s+/);
+    if (!trimmedName || nameParts.length < 2) {
+      alert("Please enter both your First Name and Surname.");
       return;
     }
 
-    if (!email.trim()) {
-      alert("Please enter your Email Address.");
+    // 3. Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email.trim() || !emailRegex.test(email.trim())) {
+      alert("Please enter a valid email address format (e.g., user@example.com).");
       return;
     }
 
-    if (!phone.trim()) {
-      alert("Please enter your Phone Number.");
+    // 4. Phone number validation: Ensure exactly 10 digits
+    const cleanedPhone = phone.replace(/\D/g, "");
+    if (cleanedPhone.length !== 10) {
+      alert("Please enter a valid 10-digit phone number.");
       return;
     }
 
+    // 5. Date validation
     if (!dateStr.trim()) {
       alert("Please select or enter a valid Date.");
       return;
     }
 
+    // 6. Station pass validation
     if (!stationPass) {
       alert("Please select a Station Pass duration.");
       return;
@@ -120,9 +129,9 @@ export default function BookingScreen() {
       pathname: "/fees",
       params: {
         items: JSON.stringify(selectedItems),
-        name,
-        email,
-        phone,
+        name: trimmedName,
+        email: email.trim(),
+        phone: cleanedPhone,
         date: dateStr,
         stationPass,
         guestCount: String(guestCount),
