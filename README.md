@@ -1,18 +1,18 @@
-![Banner for NextLevel](./assets/images/banner.png)
+![Banner for NextLevel](./assets/images/banner-app.png)
 
 # Welcome to the NEXT LEVEL Gaming Arena App
 
-[✦ YOUTUBE VIDEO LINK ✦](https://youtu.be/Z1DuGEvNvk8?si=75ISm0o_flsh9m6-)
+[✦ YOUTUBE VIDEO LINK ✦]()
 
 REMEMBER TO INCREASE THE VIDEO QUALITY ON YOUTUBE TO 1080DP
 
 ## 1. Team Contributions & Roles
 
-| Team Member           | Branch Name        | Primary Contributions & Responsibilities                                                                                                              |
-| :-------------------- | :----------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Lethabo Mohlala**   | `lethabos-screens` | Developed `Home.tsx`, `About.tsx`, `Offers.tsx`, navigation setup, overall project UI architecture, price and VAT calculation logic and Expo mobile testing configurations.                         |
-| **Keabetswe Mathole** | `kea-screens`      | Implemented package detail screens (`Ultimate.tsx`, `Esports.tsx`, `Virtual.tsx`, `Escape.tsx`).                              |
-| **Kevin Siaga**       | `kevins-screens`   | Designed `Booking.tsx` , `Fees.tsx` , `Confirmation.tsx`, and `Contact.tsx` embedded maps integration. |
+| Team Member           | Branch Name        | Primary Contributions & Responsibilities                                                                                                                                    |
+| :-------------------- | :----------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Lethabo Mohlala**   | `lethabos-screens` | Developed `Home.tsx`, `About.tsx`, `Offers.tsx`, navigation setup, overall project UI architecture, price and VAT calculation logic and Expo mobile testing configurations. |
+| **Keabetswe Mathole** | `kea-screens`      | Implemented package detail screens (`Ultimate.tsx`, `Esports.tsx`, `Virtual.tsx`, `Escape.tsx`).                                                                            |
+| **Kevin Siaga**       | `kevins-screens`   | Designed `Booking.tsx` , `Fees.tsx` , `Confirmation.tsx`, and `Contact.tsx` embedded maps integration.                                                                      |
 
 ## 2. Project Overview
 
@@ -82,9 +82,13 @@ The Next Level Gaming Arena mobile application connects gamers directly with our
 - Embedded interactive map showing proximity to landmark locations like the University of the Witwatersrand.
 - Direct inquiry form for name and email submission.
 
-## 6. Figma High-fidelity Wireframes
+## 6. Figma Wireframes & Design Evolution
 
-![Wireframes for Next Level](./assets/images/wireframes.png)
+### Initial App Wireframes (`APP WIREFRAMES TASK 2`)
+![APP WIREFRAMES TASK 2](/assets/images/wireframes2.png)
+
+### Final App UI Design (`APP WIREFRAMES FINAL`)
+![WEBSITE WIREFRAMES FINAL](/assets/images/wireframes1.png)
 
 ## 7. Technical Stack
 
@@ -131,7 +135,8 @@ The Next Level Gaming Arena mobile application connects gamers directly with our
 
 **5. Branches:**
 
-- main (default)- lethabos-screens
+- main (default)
+- lethabos-screens
 - kea-screens
 - kevins-screens
 
