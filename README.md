@@ -2,9 +2,9 @@
 
 # Welcome to the NEXT LEVEL Gaming Arena App
 
-[✦ YOUTUBE VIDEO LINK ✦]()
+[✦ YOUTUBE VIDEO LINK ✦](https://youtu.be/DlEvOrQe9y8)
 
-REMEMBER TO INCREASE THE VIDEO QUALITY ON YOUTUBE TO 1080DP
+**TIMESTAMP: 02:15 App Overview** | REMEMBER TO INCREASE THE VIDEO QUALITY ON YOUTUBE TO 1080DP. 
 
 ## 1. Team Contributions & Roles
 
